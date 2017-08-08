@@ -1,0 +1,20 @@
+---
+#Docker repo
+key_server: "hkp://p80.pool.sks-keyservers.net:80"
+repo_server: "deb https://apt.dockerproject.org/repo ubuntu-xenial main"
+repo_key: "58118E89F3A912897C070ADBF76221572C52609D"
+
+#Docker images
+image:
+  bitbucket: atlassian/bitbucket-server:latest
+  jenkins: jenkins:2.60.2
+  socat: bobrik/socat:latest
+  artifactory: docker.bintray.io/jfrog/artifactory-pro:5.4.5
+  nexus: sonatype/nexus3
+  nginx: docker.bintray.io/jfrog/nginx-artifactory-pro:5.4.5
+  ldap: lavcraft/slapd:test
+  sonar: sonarqube:6.4-alpine 
+
+#Misc
+course_path: "/home/devops"
+course_user: "devops"

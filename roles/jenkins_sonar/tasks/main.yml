@@ -1,0 +1,62 @@
+---
+- name: Update packages
+  apt: 
+    upgrade: yes
+    update_cache: yes
+- name: Add key
+  apt_key:
+    keyserver: "{{ key_server }}"
+    id: "{{ repo_key  }}"
+- name: Add Docker repository
+  apt_repository:
+    repo: "{{ repo_server }}"
+    state: present
+- name: Install Docker Engine
+  apt:
+    name: docker-engine
+    state: latest
+    update_cache: yes
+- name: Enable Docker service
+  service:
+    name: docker
+    enabled: yes
+- shell: docker -v
+  register: dout
+- fail: msg="Docker is not v17.0+. Wrong version!"
+  when: "not '17.0' in dout.stdout"
+- name: Install Docker python modules
+  shell: "pip install {{ item }}"
+  with_items:
+    - docker==2.0.1
+    - docker-compose
+- name: Move Docker compose file
+  template:
+    src: docker-compose.j2 
+    dest: "{{ course_path }}/docker-compose.yml"
+    owner: "{{ course_user }}"
+    group: "{{ course_user }}"
+- name: Prepare directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ course_user }}"
+    group: "{{ course_user }}"
+    mode: 0777 #For training course only!
+  with_items:
+    - "{{ course_path }}/bitbucket"
+    - "{{ course_path }}/jenkins0"
+    - "{{ course_path }}/jenkins-backup"
+    - "{{ course_path }}/jenkins-workspce"
+    - "{{ course_path }}/jenkins-workspace/.jenkins"
+    - "{{ course_path }}/artifactory"
+    - "{{ course_path }}/nexus-data"
+    - "{{ course_path }}/nginx"
+    - "{{ course_path }}/sonarqube"
+    - "{{ course_path }}/sonarqube/conf"
+    - "{{ course_path }}/sonarqube/data"
+    - "{{ course_path }}/sonarqube/extensions"
+    - "{{ course_path }}/sonarqube/plugins"
+- name: Pull Docker images
+  docker_service:
+    project_src: "{{ course_path }}"
+    pull: yes

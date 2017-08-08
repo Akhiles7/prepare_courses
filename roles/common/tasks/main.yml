@@ -1,0 +1,25 @@
+---
+- name: Install Python Pip
+  apt:
+    name: python-pip
+    state: latest
+    update_cache: yes
+- name: Install Ansible Python modules
+  shell: "pip install {{ item }}"
+  with_items:
+    - paramiko
+    - PyYAML
+    - Jinja2
+    - pycrypto
+- name: Install Vagrant
+  apt:
+    name: vagrant
+    state: latest
+    update_cache: yes
+- name: Install VitrualBox
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - virtualbox
+    - virtualbox-dkms

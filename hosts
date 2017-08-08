@@ -1,0 +1,5 @@
+[lgu]
+
+
+[lgu:vars]
+ansible_user=devops

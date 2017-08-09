@@ -6,10 +6,16 @@
     - PyYAML
     - Jinja2
     - pycrypto
+- name: Check if vagrant_{{ vagrant_vers }} is installed
+  command: dpkg-query -W vagrant | grep {{ vagrant_vers }}
+  register: vagrant_check_deb
+  failed_when: vagrant_check_deb.rc > 1
+  changed_when: vagrant_check_deb.rc == 1
 - name: Install Vagrant                                                    
   apt:                                                                     
     deb: "https://releases.hashicorp.com/vagrant/{{ vagrant_vers }}/vagrant_{{ vagrant_vers }}_x86_64.deb"
     update_cache: yes
+  when: vagrant_check_deb.rc == 1 
 - name: Install VitrualBox                                                 
   apt:
     name: "{{ item }}"                                                     

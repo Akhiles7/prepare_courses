@@ -13,8 +13,7 @@
     - pycrypto
 - name: Install Vagrant
   apt:
-    name: vagrant
-    state: latest
+    deb: "https://releases.hashicorp.com/vagrant/{{ vagrant_vers }}/vagrant_{{ vagrant_vers }}_x86_64.deb"
     update_cache: yes
 - name: Install VitrualBox
   apt:

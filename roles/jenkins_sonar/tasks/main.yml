@@ -60,3 +60,9 @@
   user: name="{{ course_user }}"
         groups=docker
         append=yes
+- git:
+    repo: "https://github.com/aatarasoff/jenkins-pipeline-live-demo"
+    dest: "{{ course_path }}/jenkins-pipeline-live-demo"
+- copy:
+    src: "{{ course_path }}/jenkins-pipeline-live-demo/.jenkins0"
+    dest: "{{ course_path }}/jenkins0"

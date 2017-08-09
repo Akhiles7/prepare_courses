@@ -40,7 +40,7 @@
     mode: 0777 #For training course only!
   with_items:
     - "{{ course_path }}/bitbucket"
-    - "{{ course_path }}/jenkins0"
+#    - "{{ course_path }}/jenkins0"
     - "{{ course_path }}/jenkins-backup"
     - "{{ course_path }}/jenkins-workspce"
     - "{{ course_path }}/jenkins-workspace/.jenkins"
@@ -52,6 +52,23 @@
     - "{{ course_path }}/sonarqube/data"
     - "{{ course_path }}/sonarqube/extensions"
     - "{{ course_path }}/sonarqube/plugins"
+- name: Cloning jenkins-pipeline-live-demo repo
+  git:
+    repo: "https://github.com/aatarasoff/jenkins-pipeline-live-demo"
+    dest: "{{ course_path }}/jenkins-pipeline-live-demo"
+    force: yes
+- name: Clean jenkins0 directory 
+  file:
+    state: absent
+    path: "{{ course_path }}/jenkins0/"
+- name: Create symlink for jenkins0
+  file:
+    src: "{{ course_path }}/jenkins-pipeline-live-demo/.jenkins0"
+    dest: "{{ course_path }}/jenkins0"
+    owner: "{{ course_user }}" 
+    group: "{{ course_user }}"
+    state: link
+    force: yes
 - name: Pull Docker images
   docker_service:
     project_src: "{{ course_path }}"
@@ -60,9 +77,4 @@
   user: name="{{ course_user }}"
         groups=docker
         append=yes
-- git:
-    repo: "https://github.com/aatarasoff/jenkins-pipeline-live-demo"
-    dest: "{{ course_path }}/jenkins-pipeline-live-demo"
-- copy:
-    src: "{{ course_path }}/jenkins-pipeline-live-demo/.jenkins0"
-    dest: "{{ course_path }}/jenkins0"
+

@@ -1,6 +1,6 @@
 ---
 - name: Update packages
-  apt: 
+  apt:
     upgrade: yes
     update_cache: yes
 - name: Install Python Pip
@@ -17,3 +17,4 @@
     - vim
     - tree
     - git
+    - default-jre

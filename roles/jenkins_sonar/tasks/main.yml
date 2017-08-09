@@ -27,7 +27,7 @@
     - docker-compose
 - name: Move Docker compose file
   template:
-    src: docker-compose.j2 
+    src: docker-compose.j2
     dest: "{{ course_path }}/docker-compose.yml"
     owner: "{{ course_user }}"
     group: "{{ course_user }}"
@@ -52,22 +52,22 @@
     - "{{ course_path }}/sonarqube/data"
     - "{{ course_path }}/sonarqube/extensions"
     - "{{ course_path }}/sonarqube/plugins"
-- name: Cloning jenkins-pipeline-live-demo repo
+- name: Cloning jenkins-pipeline-workshop repo
   git:
-    repo: "https://github.com/aatarasoff/jenkins-pipeline-live-demo"
-    dest: "{{ course_path }}/jenkins-pipeline-live-demo"
+    repo: "https://github.com/aatarasoff/jenkins-pipeline-workshop"
+    dest: "{{ course_path }}/jenkins-pipeline-workshop"
     force: yes
 - name: Prepare .jenkins0
-  shell: "chmod -R 777 {{ course_path }}/jenkins-pipeline-live-demo/.jenkins0"
-- name: Clean jenkins0 directory 
+  shell: "chmod -R 777 {{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
+- name: Clean jenkins0 directory
   file:
     state: absent
     path: "{{ course_path }}/jenkins0/"
 - name: Create symlink for jenkins0
   file:
-    src: "{{ course_path }}/jenkins-pipeline-live-demo/.jenkins0"
+    src: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
     dest: "{{ course_path }}/jenkins0"
-    owner: "{{ course_user }}" 
+    owner: "{{ course_user }}"
     group: "{{ course_user }}"
     state: link
     force: yes
@@ -75,7 +75,7 @@
   docker_service:
     project_src: "{{ course_path }}"
     pull: yes
-- name: Adding user {{ course_user }} into docker group  
+- name: Adding user {{ course_user }} into docker group
   user: name="{{ course_user }}"
         groups=docker
         append=yes

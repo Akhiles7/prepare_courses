@@ -1,8 +1,4 @@
 ---
-- name: Update packages
-  apt: 
-    upgrade: yes
-    update_cache: yes
 - name: Add key
   apt_key:
     keyserver: "{{ key_server }}"

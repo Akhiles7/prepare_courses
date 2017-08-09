@@ -1,4 +1,8 @@
 ---
+- name: Update packages
+  apt: 
+    upgrade: yes
+    update_cache: yes
 - name: Install Python Pip
   apt:
     name: python-pip

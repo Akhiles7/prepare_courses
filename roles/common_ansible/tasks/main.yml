@@ -17,3 +17,16 @@
   with_items:
     - virtualbox                                                           
     - virtualbox-dkms
+- name: Ensure all folders are in place
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ course_user }}"
+    group: "{{ course_user }}"
+  with_items:
+    - "/opt/prepare/boxes"
+    - "/opt/boxes"
+    - "/opt/boxes/master"
+    - "/opt/boxes/nix_slave"
+    - "/opt/boxes/win_slave"
+    - "{{ course_path }}/vms/shared"

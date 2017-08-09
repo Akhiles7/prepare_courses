@@ -1,0 +1,5 @@
+---
+# Variable 'box_srv' required for two different variants of getting boxes:
+# local - boxes should be uploaded in local folder /opt/prepare/boxes BEFORE running playbook
+# remote - boxes will be uploaded from Internet (Google Drive or Hashicorp repos)
+box_src: local

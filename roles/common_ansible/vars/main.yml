@@ -1,2 +1,6 @@
 ---
 vagrant_vers: 1.9.4
+
+#Misc
+course_path: "/home/devops"
+course_user: "devops"

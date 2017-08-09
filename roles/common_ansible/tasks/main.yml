@@ -7,10 +7,8 @@
     - Jinja2
     - pycrypto
 - name: Check if vagrant_{{ vagrant_vers }} is installed
-  command: dpkg-query -W vagrant | grep {{ vagrant_vers }}
+  shell: "vagrant -v | grep {{ vagrant_vers }}"
   register: vagrant_check_deb
-  failed_when: vagrant_check_deb.rc > 1
-  changed_when: vagrant_check_deb.rc == 1
 - name: Install Vagrant                                                    
   apt:                                                                     
     deb: "https://releases.hashicorp.com/vagrant/{{ vagrant_vers }}/vagrant_{{ vagrant_vers }}_x86_64.deb"
@@ -23,3 +21,16 @@
   with_items:
     - virtualbox                                                           
     - virtualbox-dkms
+- name: Ensure all folders are in place
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ course_user }}"
+    group: "{{ course_user }}"
+  with_items:
+    - "/opt/prepare/boxes"
+    - "/opt/boxes"
+    - "/opt/boxes/master"
+    - "/opt/boxes/nix_slave"
+    - "/opt/boxes/win_slave"
+    - "{{ course_path }}/vms/shared"

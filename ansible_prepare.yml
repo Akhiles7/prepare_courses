@@ -1,0 +1,8 @@
+---
+- name: Clean UP playbook
+  hosts: lgu
+  become: yes
+
+  roles:
+    - ansible_common
+    - ansible

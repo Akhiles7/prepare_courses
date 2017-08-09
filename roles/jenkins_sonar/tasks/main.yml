@@ -56,3 +56,13 @@
   docker_service:
     project_src: "{{ course_path }}"
     pull: yes
+- name: Adding user {{ course_user }} into docker group  
+  user: name="{{ course_user }}"
+        groups=docker
+        append=yes
+- git:
+    repo: "https://github.com/aatarasoff/jenkins-pipeline-live-demo"
+    dest: "{{ course_path }}/jenkins-pipeline-live-demo"
+- copy:
+    src: "{{ course_path }}/jenkins-pipeline-live-demo/.jenkins0"
+    dest: "{{ course_path }}/jenkins0"

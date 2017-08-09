@@ -1,5 +1,5 @@
 [lgu]
-
+172.17.1.[2:128]
 
 [lgu:vars]
 ansible_user=devops

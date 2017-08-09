@@ -22,3 +22,11 @@
   with_items:
     - virtualbox
     - virtualbox-dkms
+- name: Install misc
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - vim
+    - tree
+    - git

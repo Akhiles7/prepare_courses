@@ -56,3 +56,7 @@
   docker_service:
     project_src: "{{ course_path }}"
     pull: yes
+- name: Adding user devops into docker group  
+  user: name=devops
+        groups=docker
+        append=yes

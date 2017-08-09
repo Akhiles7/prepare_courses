@@ -4,29 +4,12 @@
     name: python-pip
     state: latest
     update_cache: yes
-- name: Install Ansible Python modules
-  shell: "pip install {{ item }}"
-  with_items:
-    - paramiko
-    - PyYAML
-    - Jinja2
-    - pycrypto
-- name: Install Vagrant
-  apt:
-    deb: "https://releases.hashicorp.com/vagrant/{{ vagrant_vers }}/vagrant_{{ vagrant_vers }}_x86_64.deb"
-    update_cache: yes
-- name: Install VitrualBox
-  apt:
-    name: "{{ item }}"
-    state: latest
-  with_items:
-    - virtualbox
-    - virtualbox-dkms
 - name: Install misc
   apt:
     name: "{{ item }}"
     state: latest
   with_items:
+    - aptitude
     - vim
     - tree
     - git

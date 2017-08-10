@@ -1,0 +1,1 @@
+Set SUID, SGID for devops user home folder. Else docker create folder with incorrect permissions.

@@ -23,11 +23,11 @@ services:
     command: TCP4-LISTEN:2375,fork,reuseaddr UNIX-CONNECT:/var/run/docker.sock
 
   juseppe:
-    image: lanwen/juseppe
+    image: {{ image.juseppe }}
     ports:
       - 9030:8080
     volumes:
-      - ./.juseppe:/juseppe/plugins
+      - {{ course_path }}/juseppe:/juseppe/plugins
     environment:
       JUSEPPE_BASE_URI: "http://juseppe:8080"
 

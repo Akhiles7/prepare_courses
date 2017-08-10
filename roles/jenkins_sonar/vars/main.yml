@@ -6,6 +6,7 @@ repo_key: "58118E89F3A912897C070ADBF76221572C52609D"
 
 #Docker images
 image:
+  juseppe: lanwen/juseppe
   bitbucket: atlassian/bitbucket-server:5.2
   jenkins: jenkins:2.60.2
   socat: bobrik/socat:latest

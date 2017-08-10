@@ -48,7 +48,6 @@
     mode: 0777 #For training course only!
   with_items:
     - "{{ course_path }}/bitbucket"
-#    - "{{ course_path }}/jenkins0"
     - "{{ course_path }}/jenkins-backup"
 #    - "{{ course_path }}/jenkins-workspace"
     - "{{ course_path }}/jenkins-workspace/.jenkins"
@@ -60,6 +59,7 @@
     - "{{ course_path }}/sonarqube/data"
     - "{{ course_path }}/sonarqube/extensions"
     - "{{ course_path }}/sonarqube/plugins"
+    - "{{ course_path }}/juseppe"
 - name: Cloning jenkins-pipeline-workshop repo
   git:
     repo: "https://github.com/aatarasoff/jenkins-pipeline-workshop"
@@ -82,6 +82,9 @@
   shell: "chown -R 200:200 jenkins-pipeline-workshop/.nexus"
   tags: chown-nexus
 
+- name: Prepare .jenkins0
+  shell: "chmod -R 777 {{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
+
 - name: Create symlink for jenkins0
   file:
     src: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
@@ -90,6 +93,12 @@
     group: "{{ course_user }}"
     state: link
     force: yes
+
+- name: Adding user {{ course_user }} into docker group
+  user: 
+    name: "{{ course_user }}"
+    groups: docker
+    append: yes
 
 - name: Pull Docker images
   ignore_errors: True

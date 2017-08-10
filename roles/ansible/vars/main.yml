@@ -6,14 +6,15 @@ box_url: #Need to think another place! Maybe Hashicorp Vagrant repo
   slave_nix: https://drive.google.com/uc?authuser=0&id=0B6Fexn49WvemcXI2YUowOXZMdjA&export=download
   slave_win: https://drive.google.com/uc?authuser=0&id=0B6Fexn49WvemY3BqeUxIQ3dHeVU&export=download
 prep_folder: /opt/prepare/boxes
+
 blist:
   master:
     name: ansible_nix_master.box
-    md5: f20e32018a1615e22455def1709f677f 
+    md5: 48c2a5308cdbcb9bac86825266b7437f 
   slave_nix:
     name: ansible_nix_slave.box
-    md5: d41d8cd98f00b204e9800998ecf8427e
+    md5: 48c2a5308cdbcb9bac86825266b7437f
   slave_win:
     name: ansible_win_slave.box
-    md5: 98e110e0045cde7747d28562900f43bf
+    md5: 48c2a5308cdbcb9bac86825266b7437f
 

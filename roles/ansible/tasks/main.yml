@@ -18,7 +18,10 @@
         - { box: "{{ blist.master.name }}", box_md5: "{{ blist.master.md5 }}", box_url: "{{ box_url.master }}" }
         - { box: "{{ blist.slave_nix.name }}", box_md5: "{{ blist.slave_nix.md5 }}", box_url: "{{ box_url.slave_nix }}" }
         - { box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}", box_url: "{{ box_url.slave_win }}" }
+    - debug: "msg='All ok!'"
   when: "'remote' in box_src"
+  tags: prep_boxes
+  
 - block:
     - name: Check the folder exist
       stat:
@@ -39,3 +42,36 @@
         - { box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}" }
     - debug: "msg='All ok!'"
   when: "'local' in box_src"
+  tags: prep_boxes
+
+- set_fact:
+    "{{ item.name }}": "{{ item.box | splitext | list }}"
+  with_items:
+    - { name: master_vbname, box: "{{ blist.master.name }}" }
+    - { name: slave_nix_vbname, box: "{{ blist.slave_nix.name }}" }
+    - { name: slave_win_vbname, box: "{{ blist.slave_win.name }}" }
+
+- name: Add Vagrant boxes #No module for Vagrant :'(
+  shell: "vagrant box list | grep sbt/{{ item.name }} && echo BOX_EXIST || vagrant box add --checksum-type md5 --checksum {{ item.box_md5 }} --name sbt/{{ item.name }} {{ item.box }}"
+  args:
+    chdir: "{{ prep_folder }}"
+  with_items:
+    - { name: "{{ master_vbname[0] }}", box: "{{ blist.master.name }}", box_md5: "{{ blist.master.md5 }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", box: "{{ blist.slave_nix.name }}", box_md5: "{{ blist.slave_nix.md5 }}" }
+    - { name: "{{ slave_win_vbname[0] }}", box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}" }
+  register: chk_box
+  changed_when: "not 'BOX_EXIST' in chk_box.stdout"
+  failed_when: ( not 'BOX_EXIST' in chk_box.stdout ) and ( not 'Successfully added box' in chk_box.stdout )
+  when: "'asis' in box_add"
+
+- name: Add Vagrant boxes #No module for Vagrant :'(
+  shell: "vagrant box add -f --checksum-type md5 --checksum {{ item.box_md5 }} --name sbt/{{ item.name }} {{ item.box }}"
+  args:
+    chdir: "{{ prep_folder }}"
+  with_items:
+    - { name: "{{ master_vbname[0] }}", box: "{{ blist.master.name }}", box_md5: "{{ blist.master.md5 }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", box: "{{ blist.slave_nix.name }}", box_md5: "{{ blist.slave_nix.md5 }}" }
+    - { name: "{{ slave_win_vbname[0] }}", box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}" }
+  register: chk_boxf
+  failed_when: "not 'Successfully added box' in chk_boxf.stdout"
+  when: "'update' in box_add"

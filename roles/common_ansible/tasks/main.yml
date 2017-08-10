@@ -21,6 +21,7 @@
   with_items:
     - virtualbox                                                           
     - virtualbox-dkms
+    - cpu-checker
 - name: Ensure all folders are in place
   file:
     path: "{{ item }}"

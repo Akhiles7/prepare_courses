@@ -3,34 +3,42 @@
   apt_key:
     keyserver: "{{ key_server }}"
     id: "{{ repo_key  }}"
+
 - name: Add Docker repository
   apt_repository:
     repo: "{{ repo_server }}"
     state: present
+
 - name: Install Docker Engine
   apt:
     name: docker-engine
     state: latest
     update_cache: yes
+
 - name: Enable Docker service
   service:
     name: docker
     enabled: yes
+
 - shell: docker -v
   register: dout
+
 - fail: msg="Docker is not v17.0+. Wrong version!"
   when: "not '17.0' in dout.stdout"
+
 - name: Install Docker python modules
   shell: "pip install {{ item }}"
   with_items:
     - docker==2.0.1
     - docker-compose
+
 - name: Move Docker compose file
   template:
     src: docker-compose.j2
     dest: "{{ course_path }}/docker-compose.yml"
     owner: "{{ course_user }}"
     group: "{{ course_user }}"
+
 - name: Prepare directories
   file:
     path: "{{ item }}"
@@ -42,7 +50,7 @@
     - "{{ course_path }}/bitbucket"
 #    - "{{ course_path }}/jenkins0"
     - "{{ course_path }}/jenkins-backup"
-    - "{{ course_path }}/jenkins-workspce"
+#    - "{{ course_path }}/jenkins-workspace"
     - "{{ course_path }}/jenkins-workspace/.jenkins"
     - "{{ course_path }}/artifactory"
     - "{{ course_path }}/nexus-data"
@@ -57,12 +65,23 @@
     repo: "https://github.com/aatarasoff/jenkins-pipeline-workshop"
     dest: "{{ course_path }}/jenkins-pipeline-workshop"
     force: yes
-- name: Prepare .jenkins0
-  shell: "chmod -R 777 {{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
-- name: Clean jenkins0 directory
+
+- name: Prepare .jenkins-workspace 
   file:
-    state: absent
-    path: "{{ course_path }}/jenkins0/"
+    path: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins-workspace"
+    state: directory
+    owner: 10000
+    group: 10000
+    mode: 0755 #For training course only!
+  tags: chown_workspace
+
+- name: Prepare .jenkins0
+  shell: "chown -R {{ course_user }}:{{ course_user }} {{ course_path }}/jenkins-pipeline-workshop"
+
+- name: Fix nexus chmod
+  shell: "chown -R 200:200 jenkins-pipeline-workshop/.nexus"
+  tags: chown-nexus
+
 - name: Create symlink for jenkins0
   file:
     src: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
@@ -71,12 +90,19 @@
     group: "{{ course_user }}"
     state: link
     force: yes
+
 - name: Pull Docker images
+  ignore_errors: True
   docker_service:
     project_src: "{{ course_path }}"
     pull: yes
+
 - name: Adding user {{ course_user }} into docker group
   user: name="{{ course_user }}"
         groups=docker
         append=yes
 
+- name: pull slave image
+  ignore_errors: True
+  shell: "docker pull lavcraft/jnlp-slave-dind"
+  tags: pull-slave-image

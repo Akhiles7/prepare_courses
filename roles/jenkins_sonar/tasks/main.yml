@@ -49,7 +49,6 @@
   with_items:
     - "{{ course_path }}/bitbucket"
     - "{{ course_path }}/jenkins-backup"
-#    - "{{ course_path }}/jenkins-workspace"
     - "{{ course_path }}/jenkins-workspace/.jenkins"
     - "{{ course_path }}/artifactory"
     - "{{ course_path }}/nexus-data"
@@ -60,30 +59,20 @@
     - "{{ course_path }}/sonarqube/extensions"
     - "{{ course_path }}/sonarqube/plugins"
     - "{{ course_path }}/juseppe"
+
 - name: Cloning jenkins-pipeline-workshop repo
   git:
     repo: "https://github.com/aatarasoff/jenkins-pipeline-workshop"
     dest: "{{ course_path }}/jenkins-pipeline-workshop"
     force: yes
 
-- name: Prepare .jenkins-workspace 
-  file:
-    path: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins-workspace"
-    state: directory
-    owner: 10000
-    group: 10000
-    mode: 0755 #For training course only!
-  tags: chown_workspace
-
-- name: Prepare .jenkins0
-  shell: "chown -R {{ course_user }}:{{ course_user }} {{ course_path }}/jenkins-pipeline-workshop"
-
-- name: Fix nexus chmod
-  shell: "chown -R 200:200 jenkins-pipeline-workshop/.nexus"
-  tags: chown-nexus
-
-- name: Prepare .jenkins0
-  shell: "chmod -R 777 {{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
+- name: Prepare .jenkins-workspace
+    file:
+      path: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins-workspace"
+      state: directory
+      owner: 10000
+      group: 10000
+      mode: 0755
 
 - name: Create symlink for jenkins0
   file:
@@ -94,24 +83,30 @@
     state: link
     force: yes
 
+- block: Correct permissions #Rewrite to file module!
+  - name: Prepare .jenkins0
+    shell: "chown -R {{ course_user }}:{{ course_user }} {{ course_path }}/jenkins-pipeline-workshop"
+  - name: Fix nexus chmod
+    shell: "chown -R 200:200 jenkins-pipeline-workshop/.nexus"
+  - name: Prepare .jenkins0
+    shell: "chmod -R 777 {{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
+  tags: correct_perms
+
 - name: Adding user {{ course_user }} into docker group
   user: 
     name: "{{ course_user }}"
     groups: docker
     append: yes
 
+- name: Pull Slave image #Need to move this to docker-compose!
+  ignore_errors: True
+  docker_image:
+    name: "{{ image.slave }}" 
+    pull: yes 
+  tags: pull-slave-image
+
 - name: Pull Docker images
   ignore_errors: True
   docker_service:
     project_src: "{{ course_path }}"
     pull: yes
-
-- name: Adding user {{ course_user }} into docker group
-  user: name="{{ course_user }}"
-        groups=docker
-        append=yes
-
-- name: pull slave image
-  ignore_errors: True
-  shell: "docker pull lavcraft/jnlp-slave-dind"
-  tags: pull-slave-image

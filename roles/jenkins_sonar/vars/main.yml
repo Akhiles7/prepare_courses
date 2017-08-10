@@ -10,11 +10,10 @@ image:
   bitbucket: atlassian/bitbucket-server:5.2
   jenkins: jenkins:2.60.2
   socat: bobrik/socat:latest
-  artifactory: docker.bintray.io/jfrog/artifactory-pro:5.4.5
   nexus: sonatype/nexus3:3.5.0
-  nginx: docker.bintray.io/jfrog/nginx-artifactory-pro:5.4.5
   ldap: lavcraft/slapd:test
   sonar: sonarqube:6.4-alpine
+  slave: lavcraft/jnlp-slave-dind
 
 #Misc
 course_path: "/home/devops"

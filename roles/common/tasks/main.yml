@@ -17,4 +17,6 @@
     - vim
     - tree
     - git
-    - default-jre
+    - default-jdk
+    - curl
+  tags: install-packages

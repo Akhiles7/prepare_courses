@@ -1,2 +1,41 @@
 ---
-- name:  
+- block:
+    - name: Clean up folder defore
+      file:
+        state: "{{ item }}"
+        path: "{{ prep_folder }}"
+      with_items:
+        - absent
+        - directory
+    - name: Remote download
+      debug: "msg='Uploading from internet'"
+    - name: Download boxes
+      get_url:
+        url: "{{ item.box_url }}"
+        dest: "{{ prep_folder }}/{{ item.box }}"
+        checksum: "md5:{{ item.box_md5 }}"
+      with_items:
+        - { box: "{{ blist.master.name }}", box_md5: "{{ blist.master.md5 }}", box_url: "{{ box_url.master }}" }
+        - { box: "{{ blist.slave_nix.name }}", box_md5: "{{ blist.slave_nix.md5 }}", box_url: "{{ box_url.slave_nix }}" }
+        - { box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}", box_url: "{{ box_url.slave_win }}" }
+  when: "'remote' in box_src"
+- block:
+    - name: Check the folder exist
+      stat:
+        path: "{{ prep_folder }}"
+      register: p
+      failed_when: 
+        - p.stat.isdir is not defined
+        - p.stat.isdir == False
+    - name: Check if boxes in place
+      stat:
+        path: "{{ prep_folder }}/{{ item.box }}"
+        get_md5: yes
+      register: box
+      failed_when: ( box.stat.exists == false) or ( not item.box_md5 in box.stat.md5 )
+      with_items:
+        - { box: "{{ blist.master.name }}", box_md5: "{{ blist.master.md5 }}" }
+        - { box: "{{ blist.slave_nix.name }}", box_md5: "{{ blist.slave_nix.md5 }}" }
+        - { box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}" }
+    - debug: "msg='All ok!'"
+  when: "'local' in box_src"

@@ -83,13 +83,19 @@
     state: link
     force: yes
 
-- block: Correct permissions #Rewrite to file module!
-  - name: Prepare .jenkins0
-    shell: "chown -R {{ course_user }}:{{ course_user }} {{ course_path }}/jenkins-pipeline-workshop"
-  - name: Fix nexus chmod
-    shell: "chown -R 200:200 jenkins-pipeline-workshop/.nexus"
-  - name: Prepare .jenkins0
-    shell: "chmod -R 777 {{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
+- block: Correct permissions 
+    - name: Fix .jenkins0 chmod
+      file:
+        path: "{{ course_path }}/jenkins-pipeline-workshop"
+        owner: "{{ course_user }}"
+        group: "{{ course_user }}"
+        recurse: yes
+    - name: Fix nexus chmod
+      file:
+        path: "{{ course_path }}/nexus-data"
+        owner: 200
+        group: 200
+        recurse: yes
   tags: correct_perms
 
 - name: Adding user {{ course_user }} into docker group

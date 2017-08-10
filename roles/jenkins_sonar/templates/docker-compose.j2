@@ -6,6 +6,7 @@ services:
     ports:
       - 8080:8080
       - 9010:9010
+      - 50000:50000
     links:
       - socatdockersock
     privileged: true
@@ -21,6 +22,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: TCP4-LISTEN:2375,fork,reuseaddr UNIX-CONNECT:/var/run/docker.sock
 
+  juseppe:
+    image: lanwen/juseppe
+    ports:
+      - 9030:8080
+    volumes:
+      - ./.juseppe:/juseppe/plugins
+    environment:
+      JUSEPPE_BASE_URI: "http://juseppe:8080"
+
   nexus:
     image: {{ image.nexus }}
     volumes:
@@ -31,11 +41,6 @@ services:
     links:
       - jenkins0
 
-  ldap:
-    image: {{ image.ldap }}
-    ports:
-      - 10389:389
-  
   bitbucket:
     image: {{ image.bitbucket }}
     ports:
@@ -43,7 +48,7 @@ services:
       - 7990:7990
     volumes:
       - {{ course_path }}/bitbucket:/var/atlassian/application-data/bitbucket
-       
+
   sonar:
     image: {{ image.sonar }}
     ports:

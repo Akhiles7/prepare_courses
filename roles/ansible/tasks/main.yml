@@ -138,7 +138,7 @@
     - name: Check if everything is started
       shell: "vagrant global-status | grep running | grep {{ item }}"
       register: vbup
-      failed_when: vbup.stdout = ""
+      failed_when: vbup.rc > 0
       with_items:
        - "{{ master_vbname[0] }}"
        - "{{ slave_nix_vbname[0] }}"

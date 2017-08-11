@@ -18,7 +18,7 @@
     - virtualbox-ext-pack
     - virtualbox-qt
     - cpu-checker
-
+    - rdesktop
 
 - name: Ensure all folders are in place
   file:

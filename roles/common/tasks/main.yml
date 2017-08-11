@@ -18,11 +18,10 @@
   apt:
     name: "{{ item }}"
     state: latest
-  with_items:
-    - aptitude
-    - vim
-    - tree
-    - git
-    - default-jdk
-    - curl
+  with_items: "{{ packages }}"
   tags: install-packages
+- name: Install Python modules
+  pip: 
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ py_modules }}"

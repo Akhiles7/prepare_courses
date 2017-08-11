@@ -14,7 +14,3 @@ image:
   ldap: lavcraft/slapd:test
   sonar: sonarqube:6.4-alpine
   slave: lavcraft/jnlp-slave-dind
-
-#Misc
-course_path: "/home/devops"
-course_user: "devops"

@@ -4,5 +4,5 @@
   become: yes
 
   roles:
-    #- common_ansible
+    - common_ansible
     - ansible

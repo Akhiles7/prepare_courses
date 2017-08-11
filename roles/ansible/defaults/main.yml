@@ -7,3 +7,7 @@ box_src: local
 # asis - do not replace boxes if they already added in system, in case they are not - they will be added.
 # update - replace boxes even of they already added in system (in case if update required)
 box_add: asis
+# Variable 'box_init' required for:
+# initialize - defult value, this is required when course machines are empty, or cleaned up manually
+# cleanup - will remove and reinitialize boxes
+box_init: initialize

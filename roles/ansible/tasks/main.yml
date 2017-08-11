@@ -3,7 +3,7 @@
     - name: Clean up folder defore
       file:
         state: "{{ item }}"
-        path: "{{ prep_folder }}"
+        path: "{{ prep_box_path }}"
       with_items:
         - absent
         - directory
@@ -12,12 +12,12 @@
     - name: Download boxes
       get_url:
         url: "{{ item.box_url }}"
-        dest: "{{ prep_folder }}/{{ item.box }}"
+        dest: "{{ prep_box_path }}/{{ item.box }}"
         checksum: "md5:{{ item.box_md5 }}"
       with_items:
-        - { box: "{{ blist.master.name }}", box_md5: "{{ blist.master.md5 }}", box_url: "{{ box_url.master }}" }
-        - { box: "{{ blist.slave_nix.name }}", box_md5: "{{ blist.slave_nix.md5 }}", box_url: "{{ box_url.slave_nix }}" }
-        - { box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}", box_url: "{{ box_url.slave_win }}" }
+        - { box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}", box_url: "{{ vbox.master.url }}" }
+        - { box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}", box_url: "{{ vbox.slave_nix.url }}" }
+        - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}", box_url: "{{ vbox.slave_win.url }}" }
     - debug: "msg='All ok!'"
   when: "'remote' in box_src"
   tags: prep_boxes
@@ -25,21 +25,21 @@
 - block:
     - name: Check the folder exist
       stat:
-        path: "{{ prep_folder }}"
+        path: "{{ prep_box_path }}"
       register: p
       failed_when: 
         - p.stat.isdir is not defined
         - p.stat.isdir == False
     - name: Check if boxes in place
       stat:
-        path: "{{ prep_folder }}/{{ item.box }}"
+        path: "{{ prep_box_path }}/{{ item.box }}"
         get_md5: yes
       register: box
       failed_when: ( box.stat.exists == false) or ( not item.box_md5 in box.stat.md5 )
       with_items:
-        - { box: "{{ blist.master.name }}", box_md5: "{{ blist.master.md5 }}" }
-        - { box: "{{ blist.slave_nix.name }}", box_md5: "{{ blist.slave_nix.md5 }}" }
-        - { box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}" }
+        - { box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
+        - { box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
+        - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
     - debug: "msg='All ok!'"
   when: "'local' in box_src"
   tags: prep_boxes
@@ -47,31 +47,101 @@
 - set_fact:
     "{{ item.name }}": "{{ item.box | splitext | list }}"
   with_items:
-    - { name: master_vbname, box: "{{ blist.master.name }}" }
-    - { name: slave_nix_vbname, box: "{{ blist.slave_nix.name }}" }
-    - { name: slave_win_vbname, box: "{{ blist.slave_win.name }}" }
+    - { name: master_vbname, box: "{{ vbox.master.name }}" }
+    - { name: slave_nix_vbname, box: "{{ vbox.slave_nix.name }}" }
+    - { name: slave_win_vbname, box: "{{ vbox.slave_win.name }}" }
 
 - name: Add Vagrant boxes #No module for Vagrant :'(
-  shell: "vagrant box list | grep sbt/{{ item.name }} && echo BOX_EXIST || vagrant box add --checksum-type md5 --checksum {{ item.box_md5 }} --name sbt/{{ item.name }} {{ item.box }}"
+  shell: "vagrant box list | grep sbt/{{ item.name }} && echo BOX_EXISTS || vagrant box add --checksum-type md5 --checksum {{ item.box_md5 }} --name sbt/{{ item.name }} {{ item.box }}"
   args:
-    chdir: "{{ prep_folder }}"
+    chdir: "{{ prep_box_path }}"
   with_items:
-    - { name: "{{ master_vbname[0] }}", box: "{{ blist.master.name }}", box_md5: "{{ blist.master.md5 }}" }
-    - { name: "{{ slave_nix_vbname[0] }}", box: "{{ blist.slave_nix.name }}", box_md5: "{{ blist.slave_nix.md5 }}" }
-    - { name: "{{ slave_win_vbname[0] }}", box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}" }
+    - { name: "{{ master_vbname[0] }}", box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
+    - { name: "{{ slave_win_vbname[0] }}", box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
   register: chk_box
-  changed_when: "not 'BOX_EXIST' in chk_box.stdout"
-  failed_when: ( not 'BOX_EXIST' in chk_box.stdout ) and ( not 'Successfully added box' in chk_box.stdout )
+  changed_when: "not 'BOX_EXISTS' in chk_box.stdout"
+  failed_when: ( not 'BOX_EXISTS' in chk_box.stdout ) and ( not 'Successfully added box' in chk_vbox.stdout )
   when: "'asis' in box_add"
 
-- name: Add Vagrant boxes #No module for Vagrant :'(
+- name: Update Vagrant boxes #No module for Vagrant :'(
   shell: "vagrant box add -f --checksum-type md5 --checksum {{ item.box_md5 }} --name sbt/{{ item.name }} {{ item.box }}"
   args:
-    chdir: "{{ prep_folder }}"
+    chdir: "{{ prep_box_path }}"
   with_items:
-    - { name: "{{ master_vbname[0] }}", box: "{{ blist.master.name }}", box_md5: "{{ blist.master.md5 }}" }
-    - { name: "{{ slave_nix_vbname[0] }}", box: "{{ blist.slave_nix.name }}", box_md5: "{{ blist.slave_nix.md5 }}" }
-    - { name: "{{ slave_win_vbname[0] }}", box: "{{ blist.slave_win.name }}", box_md5: "{{ blist.slave_win.md5 }}" }
+    - { name: "{{ master_vbname[0] }}", box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
+    - { name: "{{ slave_win_vbname[0] }}", box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
   register: chk_boxf
   failed_when: "not 'Successfully added box' in chk_boxf.stdout"
   when: "'update' in box_add"
+
+- name: YA check if boxes imported
+  shell: vagrant box list
+  register: cb
+  failed_when: "not item in cb.stdout"
+  changed_when: "not item in cb.stdout"
+  with_items:
+    - "{{ master_vbname[0] }}"
+    - "{{ slave_nix_vbname[0] }}"
+    - "{{ slave_win_vbname[0] }}"
+
+- block:
+    - name: Get running boxes IDs
+      shell: "vagrant global-status | grep running | awk '{print $1}'"
+      register: vids
+    - debug: msg="WARNING! No running boxes were found"
+      when: vids.stdout_lines != "" #Find other way
+    - name: Stop and Destroy boxes
+      shell: "vagrant {{ item[0] }} {{ item[1] }}"
+      with_nested:
+        - [ 'halt', 'destroy' ]
+        - "{{ vids.stdout_lines }}"
+      when: vids.stdout_lines != ""
+    - name: Cleanup box folders
+      file:
+        state: "{{ item[0] }}"
+        path: "{{ item[1] }}"
+      with_nested:
+        - [ 'absent', 'directory' ]
+        - [ '{{ vbox.master.folder }}', '{{ vbox.slave_nix.folder }}', '{{ vbox.slave_win.folder }}']
+  when: "'cleanup' in box_init"
+
+- name: Initialize boxes
+  shell: "vagrant init -m -f sbt/{{ item.name }}"
+  args:
+    chdir: "{{ item.dest }}"
+  register: vinit
+  with_items:
+    - { name: "{{ master_vbname[0] }}", dest: "{{ vbox.master.folder }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", dest: "{{ vbox.slave_nix.folder }}" }
+    - { name: "{{ slave_win_vbname[0] }}", dest: "{{ vbox.slave_win.folder }}" }
+
+- name: Upload Vagrant files
+  template:
+    src: Vagrantfile.j2
+    dest: "{{ item.dest }}/Vagrantfile"
+  with_items:
+    - { name: "{{ master_vbname[0] }}", ip: "{{ vbox.master.ip }}", mem: "{{ vbox.master.mem }}", dest: "{{ vbox.master.folder }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", ip: "{{ vbox.slave_nix.ip }}", mem: "{{ vbox.slave_nix.mem }}", dest: "{{ vbox.slave_nix.folder }}" }
+    - { name: "{{ slave_win_vbname[0] }}", ip: "{{ vbox.slave_win.ip }}", mem: "{{ vbox.slave_win.mem }}", dest: "{{ vbox.slave_win.folder }}" }
+
+- name: Poehali!
+  shell: vagrant up
+  args:
+    chdir: "{{ item }}"
+  with_items:
+    - "{{ vbox.master.folder }}"
+    - "{{ vbox.slave_nix.folder }}"
+    - "{{ vbox.slave_win.folder }}"
+
+- name: Check if everything is started
+  shell: "vagrant global-status | grep running | grep {{ item }}"
+  register: vbup
+  failed_when: vbup.stdout = ""
+  with_items:
+   - "{{ master_vbname[0] }}"
+   - "{{ slave_nix_vbname[0] }}"
+   - "{{ slave_win_vbname[0] }}"
+
+- debug: msg='Configuration completed SUCCESSFULLY'

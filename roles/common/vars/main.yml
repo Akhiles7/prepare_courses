@@ -1,0 +1,3 @@
+---
+packages: ['aptitude', 'virtualenv', 'vim', 'tree', 'git', 'default-jdk', 'curl']
+py_modules: ['paramiko', 'PyYAML', 'Jinja2', 'pycrypto']

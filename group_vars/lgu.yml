@@ -1,0 +1,4 @@
+---
+course_path: "/home/devops"
+prep_box_path: "/opt/prepare/boxes"
+course_user: "devops"

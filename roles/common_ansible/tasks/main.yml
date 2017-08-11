@@ -1,11 +1,4 @@
 ---
-- name: Install Ansible Python modules
-  shell: "pip install {{ item }}"
-  with_items:
-    - paramiko
-    - PyYAML
-    - Jinja2
-    - pycrypto
 - name: Check if vagrant_{{ vagrant_vers }} is installed
   shell: "vagrant -v | grep {{ vagrant_vers }}"
   register: vagrant_check_deb
@@ -29,7 +22,7 @@
     owner: "{{ course_user }}"
     group: "{{ course_user }}"
   with_items:
-    - "/opt/prepare/boxes"
+    - "{{ prep_box_path }}"
     - "/opt/boxes"
     - "/opt/boxes/master"
     - "/opt/boxes/nix_slave"

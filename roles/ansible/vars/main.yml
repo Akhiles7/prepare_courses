@@ -1,20 +1,26 @@
 ---
 #All values are test only! Need to change to real ones!
 #Boxes
-box_url: #Need to think another place! Maybe Hashicorp Vagrant repo
-  master: https://drive.google.com/uc?authuser=0&id=0B6Fexn49WvemQnpZcllaV2pVMjA&export=download
-  slave_nix: https://drive.google.com/uc?authuser=0&id=0B6Fexn49WvemcXI2YUowOXZMdjA&export=download
-  slave_win: https://drive.google.com/uc?authuser=0&id=0B6Fexn49WvemY3BqeUxIQ3dHeVU&export=download
-prep_folder: /opt/prepare/boxes
-
-blist:
+# For URLs: need to think another place! Maybe Hashicorp Vagrant repo
+vbox:
   master:
     name: ansible_nix_master.box
-    md5: 48c2a5308cdbcb9bac86825266b7437f 
+    md5: 48c2a5308cdbcb9bac86825266b7437f
+    url: https://drive.google.com/uc?authuser=0&id=0B6Fexn49WvemQnpZcllaV2pVMjA&export=download
+    folder: /opt/boxes/master
+    ip: 192.168.33.101
+    mem: 1024
   slave_nix:
     name: ansible_nix_slave.box
     md5: 48c2a5308cdbcb9bac86825266b7437f
+    url: https://drive.google.com/uc?authuser=0&id=0B6Fexn49WvemcXI2YUowOXZMdjA&export=download
+    folder: /opt/boxes/nix_slave
+    ip: 192.168.33.102
+    mem: 1024
   slave_win:
     name: ansible_win_slave.box
     md5: 48c2a5308cdbcb9bac86825266b7437f
-
+    url: https://drive.google.com/uc?authuser=0&id=0B6Fexn49WvemY3BqeUxIQ3dHeVU&export=download
+    folder: /opt/boxes/win_slave
+    ip: 192.168.33.103
+    mem: 3584

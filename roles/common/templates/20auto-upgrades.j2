@@ -1,0 +1,8 @@
+// Do “apt-get update” automatically every n-days (0=disable)
+APT::Periodic::Update-Package-Lists "{{ apt_update_package_lists }}";
+
+// Run the "unattended-upgrade" security upgrade script
+// every n-days (0=disabled)
+// Requires the package "unattended-upgrades" and will write
+// a log in /var/log/unattended-upgrades
+APT::Periodic::Unattended-Upgrade "{{ apt_unattended_upgrades | int }}";

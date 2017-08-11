@@ -126,22 +126,23 @@
     - { name: "{{ slave_nix_vbname[0] }}", ip: "{{ vbox.slave_nix.ip }}", mem: "{{ vbox.slave_nix.mem }}", dest: "{{ vbox.slave_nix.folder }}" }
     - { name: "{{ slave_win_vbname[0] }}", ip: "{{ vbox.slave_win.ip }}", mem: "{{ vbox.slave_win.mem }}", dest: "{{ vbox.slave_win.folder }}" }
 
-- name: Poehali!
-  shell: vagrant up
-  args:
-    chdir: "{{ item }}"
-  with_items:
-    - "{{ vbox.master.folder }}"
-    - "{{ vbox.slave_nix.folder }}"
-    - "{{ vbox.slave_win.folder }}"
-
-- name: Check if everything is started
-  shell: "vagrant global-status | grep running | grep {{ item }}"
-  register: vbup
-  failed_when: vbup.stdout = ""
-  with_items:
-   - "{{ master_vbname[0] }}"
-   - "{{ slave_nix_vbname[0] }}"
-   - "{{ slave_win_vbname[0] }}"
+- block:
+    - name: Poehali!
+      shell: vagrant up
+      args:
+        chdir: "{{ item }}"
+      with_items:
+        - "{{ vbox.master.folder }}"
+        - "{{ vbox.slave_nix.folder }}"
+        - "{{ vbox.slave_win.folder }}"
+    - name: Check if everything is started
+      shell: "vagrant global-status | grep running | grep {{ item }}"
+      register: vbup
+      failed_when: vbup.stdout = ""
+      with_items:
+       - "{{ master_vbname[0] }}"
+       - "{{ slave_nix_vbname[0] }}"
+       - "{{ slave_win_vbname[0] }}"
+  tags: start_boxes
 
 - debug: msg='Configuration completed SUCCESSFULLY'

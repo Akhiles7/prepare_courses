@@ -7,6 +7,7 @@
     deb: "https://releases.hashicorp.com/vagrant/{{ vagrant_vers }}/vagrant_{{ vagrant_vers }}_x86_64.deb"
     update_cache: yes
   when: vagrant_check_deb.rc == 1 
+
 - name: Install VitrualBox                                                 
   apt:
     name: "{{ item }}"                                                     
@@ -14,7 +15,11 @@
   with_items:
     - virtualbox                                                           
     - virtualbox-dkms
+    - virtualbox-ext-pack
+    - virtualbox-qt
     - cpu-checker
+
+
 - name: Ensure all folders are in place
   file:
     path: "{{ item }}"

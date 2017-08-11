@@ -1,0 +1,4 @@
+# Do “apt-get update” automatically every n-days (0=disable)
+apt_update_package_lists: 0
+
+apt_unattended_upgrades: 0

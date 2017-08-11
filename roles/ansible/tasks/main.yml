@@ -61,7 +61,7 @@
     - { name: "{{ slave_win_vbname[0] }}", box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
   register: chk_box
   changed_when: "not 'BOX_EXISTS' in chk_box.stdout"
-  failed_when: ( not 'BOX_EXISTS' in chk_box.stdout ) and ( not 'Successfully added box' in chk_vbox.stdout )
+  failed_when: ( not 'BOX_EXISTS' in chk_box.stdout ) and ( not 'Successfully added box' in chk_box.stdout )
   when: "'asis' in box_add"
 
 - name: Update Vagrant boxes #No module for Vagrant :'(

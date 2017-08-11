@@ -1,5 +1,5 @@
 ---
-- name: Clean UP playbook
+- name: Ansible Course prepare playbook
   hosts: lgu
   become: yes
 

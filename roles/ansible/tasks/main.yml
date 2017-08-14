@@ -4,6 +4,8 @@
       file:
         state: "{{ item }}"
         path: "{{ prep_box_path }}"
+        owner: "{{ course_user }}"
+        group: "{{ course_user }}"
       with_items:
         - absent
         - directory
@@ -63,6 +65,7 @@
   changed_when: "not 'BOX_EXISTS' in chk_box.stdout"
   failed_when: ( not 'BOX_EXISTS' in chk_box.stdout ) and ( not 'Successfully added box' in chk_box.stdout )
   when: "'asis' in box_add"
+  become: false
 
 - name: Update Vagrant boxes #No module for Vagrant :'(
   shell: "vagrant box add -f --checksum-type md5 --checksum {{ item.box_md5 }} --name sbt/{{ item.name }} {{ item.box }}"
@@ -75,6 +78,7 @@
   register: chk_boxf
   failed_when: "not 'Successfully added box' in chk_boxf.stdout"
   when: "'update' in box_add"
+  become: false
 
 - name: YA check if boxes imported
   shell: vagrant box list
@@ -85,6 +89,7 @@
     - "{{ master_vbname[0] }}"
     - "{{ slave_nix_vbname[0] }}"
     - "{{ slave_win_vbname[0] }}"
+  become: false
 
 - block:
     - name: Get running boxes IDs
@@ -102,10 +107,14 @@
       file:
         state: "{{ item[0] }}"
         path: "{{ item[1] }}"
+        owner: "{{ course_user }}"
+        group: "{{ course_user }}"
       with_nested:
         - [ 'absent', 'directory' ]
         - [ '{{ vbox.master.folder }}', '{{ vbox.slave_nix.folder }}', '{{ vbox.slave_win.folder }}']
+      become: true
   when: "'cleanup' in box_init"
+  become: false
 
 - name: Initialize boxes
   shell: "vagrant init -m -f sbt/{{ item.name }}"
@@ -116,6 +125,7 @@
     - { name: "{{ master_vbname[0] }}", dest: "{{ vbox.master.folder }}" }
     - { name: "{{ slave_nix_vbname[0] }}", dest: "{{ vbox.slave_nix.folder }}" }
     - { name: "{{ slave_win_vbname[0] }}", dest: "{{ vbox.slave_win.folder }}" }
+  become: false
 
 - name: Upload Vagrant files
   template:
@@ -125,6 +135,7 @@
     - { name: "{{ master_vbname[0] }}", ip: "{{ vbox.master.ip }}", mem: "{{ vbox.master.mem }}", dest: "{{ vbox.master.folder }}" }
     - { name: "{{ slave_nix_vbname[0] }}", ip: "{{ vbox.slave_nix.ip }}", mem: "{{ vbox.slave_nix.mem }}", dest: "{{ vbox.slave_nix.folder }}" }
     - { name: "{{ slave_win_vbname[0] }}", ip: "{{ vbox.slave_win.ip }}", mem: "{{ vbox.slave_win.mem }}", dest: "{{ vbox.slave_win.folder }}" }
+  become: false
 
 - block:
     - name: Poehali!
@@ -144,5 +155,6 @@
        - "{{ slave_nix_vbname[0] }}"
        - "{{ slave_win_vbname[0] }}"
   tags: start_boxes
+  become: false
 
 - debug: msg='Configuration completed SUCCESSFULLY'

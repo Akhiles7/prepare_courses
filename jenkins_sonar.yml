@@ -5,5 +5,4 @@
   
   roles:
     - common
-    - common_ansible #temporary
     - jenkins_sonar

@@ -1,4 +1,7 @@
 ---
+- name: Set timezone
+  timezone:
+    name: "{{ timezone }}"
 - name: Disable apt autoupdate
   template:
     src: 20auto-upgrades.j2

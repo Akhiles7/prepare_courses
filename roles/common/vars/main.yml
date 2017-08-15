@@ -4,3 +4,4 @@ py_modules: ['paramiko', 'PyYAML', 'Jinja2', 'pycrypto']
 # Do “apt-get update” automatically every n-days (0=disable)
 apt_update_package_lists: 0
 apt_unattended_upgrades: 0
+timezone: Europe/Moscow

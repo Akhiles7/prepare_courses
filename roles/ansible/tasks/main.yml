@@ -95,7 +95,7 @@
     - name: Get running boxes IDs
       shell: "vagrant global-status | grep running | awk '{print $1}'"
       register: vids
-    - debug: msg="WARNING! No running boxes were found"
+    - debug: msg="Running boxes were found. Stopping"
       when: vids.stdout_lines != "" #Find other way
     - name: Stop and Destroy boxes
       shell: "vagrant {{ item[0] }} {{ item[1] }} -f"

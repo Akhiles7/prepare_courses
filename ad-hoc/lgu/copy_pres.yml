@@ -7,25 +7,25 @@
     - name: Copy pres
       copy:
         src: ../upload/Ansible_course_2.0.zip
-        dest: /home/devops/Ansible_course_2.0.zip
-        owner: devops
-        group: devops
+        dest: "{{ course_path }}/Ansible_course_2.0.zip"
+        owner: {{ course_user }}
+        group: {{ course_user }}
       tags:
         - presa
     - name: copy win
       copy:
         src: ../upload/tomcat_win.tar.gz
-        dest: "/home/devops/vms/shared/"
-        owner: devops
-        group: devops
+        dest: "{{ course_path }}/vms/shared/"
+        owner: {{ course_user }}
+        group: {{ course_user }}
       tags:
         - win
-    - name: copy
+    - name: copy tomcat
       copy:
         src: "{{ item }}"
-        dest: "/home/devops/vms/shared/"
-        owner: devops
-        group: devops
+        dest: "{{ course_path }}/vms/shared/"
+        owner: {{ course_user }}
+        group: {{ course_user }}
       with_items:
         - ../upload/tomcat_playbook_day1.yml
         - ../upload/tomcat_service.j2

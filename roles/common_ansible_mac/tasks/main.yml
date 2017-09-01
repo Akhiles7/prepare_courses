@@ -1,0 +1,25 @@
+---
+#- name: Install Vagrant                                                    
+#  homebrew:
+#    name: "{{ item }}"
+#    state: present
+#    update_homebrew: yes
+#  with_items:
+#    - "Caskroom/cask/vagrant"
+#    - "Caskroom/cask/vagrant-manager"
+#    - "Caskroom/cask/virtualbox"
+#    - "Caskroom/cask/virtualbox-extension-pack"                                                                
+
+- name: Ensure all folders are in place
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: staff
+  with_items:
+    - "{{ prep_box_path }}"
+    - "{{ course_path }}/boxes"
+    - "{{ course_path }}/boxes/master"
+    - "{{ course_path }}/boxes/nix_slave"
+    - "{{ course_path }}/boxes/win_slave"
+    - "{{ course_path }}/vms/shared"

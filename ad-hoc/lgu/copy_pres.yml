@@ -6,7 +6,7 @@
   tasks:
     - name: Copy pres
       copy:
-        src: upload/Ansible_course_2.0.zip
+        src: ../upload/Ansible_course_2.0.zip
         dest: /home/devops/Ansible_course_2.0.zip
         owner: devops
         group: devops
@@ -14,7 +14,7 @@
         - presa
     - name: copy win
       copy:
-        src: upload/tomcat_win.tar.gz
+        src: ../upload/tomcat_win.tar.gz
         dest: "/home/devops/vms/shared/"
         owner: devops
         group: devops
@@ -27,7 +27,7 @@
         owner: devops
         group: devops
       with_items:
-        - upload/tomcat_playbook_day1.yml
-        - upload/tomcat_service.j2
+        - ../upload/tomcat_playbook_day1.yml
+        - ../upload/tomcat_service.j2
       tags:
         - example

@@ -1,0 +1,11 @@
+---
+- name: Start boxes
+  hosts: oxf
+  become: false
+  
+  environment: 
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+ 
+  tasks:
+    - name: Start VirtualBox
+      shell: /usr/local/bin/virtualbox --normal

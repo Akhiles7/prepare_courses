@@ -1,0 +1,29 @@
+---
+- name: Start boxes
+  hosts: oxf
+  become: false
+  
+  environment: 
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+ 
+  tasks:
+    #- name: Start VirtualBox
+    #  shell: /usr/local/bin/virtualbox --normal
+    - name: Poehali!
+      shell: /usr/local/bin/vagrant up --provider virtualbox
+      args:
+        chdir: "{{ item }}"
+        executable: /bin/bash
+      with_items:
+        - "{{ course_path }}/boxes/master"
+        - "{{ course_path }}/boxes/nix_slave"
+        - "{{ course_path }}/boxes/win_slave"
+      ignore_errors: true
+    - name: Check if everything is started
+      shell: "/usr/local/bin/vagrant global-status | grep running | grep {{ item }}"
+      register: vbup
+      failed_when: vbup.rc > 0
+      with_items:
+       - ansible_nix_master
+       - ansible_nix_slave
+       - ansible_win_slave

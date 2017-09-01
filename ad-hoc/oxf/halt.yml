@@ -1,0 +1,22 @@
+---
+- name: Halt all boxes
+  hosts: oxf
+  become: false
+
+  environment:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" 
+  
+  tasks:
+    - name: Get running boxes IDs
+      shell: "/usr/local/bin/vagrant global-status | grep running | awk '{print $1}'"
+      args:
+        executable: /bin/bash
+      register: vids
+    - debug: msg="Some running boxes were found. Stopping"
+      when: vids.stdout_lines != " " #Find other way
+    - name: Stop boxes
+      shell: "/usr/local/bin/vagrant halt {{ item }}"
+      args:
+        executable: /bin/bash
+      with_items: "{{ vids.stdout_lines }}"
+      when: vids.stdout_lines != ""

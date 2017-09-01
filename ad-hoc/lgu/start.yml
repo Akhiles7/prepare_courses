@@ -4,6 +4,8 @@
   become: false
   
   tasks:
+    - name: Start VirtualBox
+      shell: /usr/local/bin/virtualbox
     - name: Poehali!
       shell: vagrant up
       args:

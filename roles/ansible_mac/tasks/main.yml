@@ -1,0 +1,182 @@
+---
+- block:
+    - name: Clean up folder defore
+      file:
+        state: "{{ item }}"
+        path: "{{ prep_box_path }}"
+        owner: "{{ course_user }}"
+        group: "{{ course_user }}"
+      with_items:
+        - absent
+        - directory
+    - name: Remote download
+      debug: "msg='Uploading from internet'"
+    - name: Download boxes
+      get_url:
+        url: "{{ item.box_url }}"
+        dest: "{{ prep_box_path }}/{{ item.box }}"
+        checksum: "md5:{{ item.box_md5 }}"
+      with_items:
+        - { box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}", box_url: "{{ vbox.master.url }}" }
+        - { box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}", box_url: "{{ vbox.slave_nix.url }}" }
+        - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}", box_url: "{{ vbox.slave_win.url }}" }
+    - debug: "msg='All ok!'"
+  when: "'remote' in box_src"
+  tags: prep_boxes
+  
+- block:
+    - name: Check the folder exist
+      stat:
+        path: "{{ prep_box_path }}"
+      register: p
+      failed_when: 
+        - p.stat.isdir is not defined
+        - p.stat.isdir == False
+    - name: Check if boxes in place
+      stat:
+        path: "{{ prep_box_path }}/{{ item.box }}"
+        get_md5: yes
+      register: box
+      failed_when: ( box.stat.exists == false) or ( not item.box_md5 in box.stat.md5 )
+      with_items:
+        - { box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
+        - { box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
+        - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
+    - debug: "msg='All ok!'"
+  when: "'local' in box_src"
+  tags: prep_boxes
+
+- set_fact:
+    "{{ item.name }}": "{{ item.box | splitext | list }}"
+  with_items:
+    - { name: master_vbname, box: "{{ vbox.master.name }}" }
+    - { name: slave_nix_vbname, box: "{{ vbox.slave_nix.name }}" }
+    - { name: slave_win_vbname, box: "{{ vbox.slave_win.name }}" }
+
+- name: Add Vagrant boxes #No module for Vagrant :'(
+  shell: "/usr/local/bin/vagrant box list | grep sbt/{{ item.name }} && echo BOX_EXISTS || /usr/local/bin/vagrant box add --checksum-type md5 --checksum {{ item.box_md5 }} --name sbt/{{ item.name }} {{ item.box }}"
+  args:
+    chdir: "{{ prep_box_path }}"
+    executable: /bin/bash
+  with_items:
+    - { name: "{{ master_vbname[0] }}", box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
+    - { name: "{{ slave_win_vbname[0] }}", box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
+  register: chk_box
+  changed_when: "not 'BOX_EXISTS' in chk_box.stdout"
+  failed_when: ( not 'BOX_EXISTS' in chk_box.stdout ) and ( not 'Successfully added box' in chk_box.stdout )
+  when: "'asis' in box_add"
+  become: false
+
+- name: Update Vagrant boxes #No module for Vagrant :'(
+  shell: "/usr/local/bin/vagrant box add -f --checksum-type md5 --checksum {{ item.box_md5 }} --name sbt/{{ item.name }} {{ item.box }}"
+  args:
+    chdir: "{{ prep_box_path }}"
+    executable: /bin/bash
+  with_items:
+    - { name: "{{ master_vbname[0] }}", box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
+    - { name: "{{ slave_win_vbname[0] }}", box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
+  register: chk_boxf
+  failed_when: "not 'Successfully added box' in chk_boxf.stdout"
+  when: "'update' in box_add"
+  become: false
+
+- name: YA check if boxes imported
+  shell: /usr/local/bin/vagrant box list
+  args:
+    executable: /bin/bash
+  register: cb
+  failed_when: "not item in cb.stdout"
+  changed_when: "not item in cb.stdout"
+  with_items:
+    - "{{ master_vbname[0] }}"
+    - "{{ slave_nix_vbname[0] }}"
+    - "{{ slave_win_vbname[0] }}"
+  become: false
+
+- block:
+    - name: Get running boxes IDs
+      shell: "/usr/local/bin/vagrant global-status | grep running | awk '{print $1}'"
+      args:
+        executable: /bin/bash
+      register: vids
+    - debug: msg="Running boxes were found. Stopping"
+      when: vids.stdout_lines != "" #Find other way
+    - name: Stop and Destroy boxes
+      shell: "/usr/local/bin/vagrant {{ item[0] }} {{ item[1] }} -f"
+      args:
+        executable: /bin/bash
+      with_nested:
+        - [ 'halt', 'destroy' ]
+        - "{{ vids.stdout_lines }}"
+    - name: Prune Vagrant global status
+      shell: "/usr/local/bin/vagrant global-status --prune"
+      args:
+        executable: /bin/bash
+    - name: Cleanup box folders
+      file:
+        state: "{{ item[0] }}"
+        path: "{{ item[1] }}"
+        owner: "{{ course_user }}"
+        group: "{{ course_user }}"
+      with_nested:
+        - [ 'absent', 'directory' ]
+        - [ '{{ vbox.master.folder }}', '{{ vbox.slave_nix.folder }}', '{{ vbox.slave_win.folder }}', '/home/devops/vms/shared']
+      become: true
+  when: "'cleanup' in box_init"
+  become: false
+
+- name: Initialize boxes
+  shell: "/usr/local/bin/vagrant init -m -f sbt/{{ item.name }}"
+  args:
+    chdir: "{{ item.dest }}"
+    executable: /bin/bash
+  register: vinit
+  with_items:
+    - { name: "{{ master_vbname[0] }}", dest: "{{ vbox.master.folder }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", dest: "{{ vbox.slave_nix.folder }}" }
+    - { name: "{{ slave_win_vbname[0] }}", dest: "{{ vbox.slave_win.folder }}" }
+  become: false
+
+- name: Upload Vagrant files
+  template:
+    src: Vagrantfile.j2
+    dest: "{{ item.dest }}/Vagrantfile"
+  with_items:
+    - { name: "{{ master_vbname[0] }}", ip: "{{ vbox.master.ip }}", mem: "{{ vbox.master.mem }}", dest: "{{ vbox.master.folder }}" }
+    - { name: "{{ slave_nix_vbname[0] }}", ip: "{{ vbox.slave_nix.ip }}", mem: "{{ vbox.slave_nix.mem }}", dest: "{{ vbox.slave_nix.folder }}" }
+    - { name: "{{ slave_win_vbname[0] }}", ip: "{{ vbox.slave_win.ip }}", mem: "{{ vbox.slave_win.mem }}", dest: "{{ vbox.slave_win.folder }}" }
+  become: false
+
+- name: Change Win Vagrant file
+  lineinfile:
+    dest: "{{ vbox.slave_win.folder }}/Vagrantfile"
+    regexp: 'config.vm.synced_folder '
+    state: absent
+
+- block:
+    - name: Poehali!
+      shell: "/usr/local/bin/vagrant up --provider virtualbox"
+      args:
+        chdir: "{{ item }}"
+        executable: /bin/bash
+      with_items:
+        - "{{ vbox.master.folder }}"
+        - "{{ vbox.slave_nix.folder }}"
+        - "{{ vbox.slave_win.folder }}"
+      ignore_errors: true
+    - name: Check if everything is started
+      shell: "/usr/local/bin/vagrant global-status | grep running | grep {{ item }}"
+      args:
+        executable: /bin/bash
+      register: vbup
+      failed_when: vbup.rc > 0
+      with_items:
+       - "{{ master_vbname[0] }}"
+       - "{{ slave_nix_vbname[0] }}"
+       - "{{ slave_win_vbname[0] }}"
+  tags: start_boxes
+  become: false
+
+- debug: msg='Configuration completed SUCCESSFULLY'

@@ -1,0 +1,25 @@
+---
+#Boxes
+# For URLs: need to think another place! Maybe Hashicorp Vagrant repo
+vbox:
+  master:
+    name: ansible_nix_master.box
+    md5: 5a6d00cb940fd58316c8d5f8a41525df
+    url: https://drive.google.com/uc?authuser=0&id=0B6Fexn49Wvema2E2RU5UVXJYNTQ&export=download
+    folder: "{{ course_path }}/boxes/master"
+    ip: 192.168.33.101
+    mem: 1024
+  slave_nix:
+    name: ansible_nix_slave.box
+    md5: 135395388abd2fbdc080f81b4e9831a2
+    url: https://drive.google.com/uc?authuser=0&id=0B6Fexn49Wvemd0ZXZGxHQkl0elk&export=download
+    folder: "{{ course_path }}/boxes/nix_slave"
+    ip: 192.168.33.102
+    mem: 1024
+  slave_win:
+    name: ansible_win_slave.box
+    md5: 2ee65e11023725e6ad48e239b35b2141
+    url: https://drive.google.com/uc?authuser=0&id=0BzRbJp3tSIO1ZnlNU2JILWZmYlE&export=download
+    folder: "{{ course_path }}/boxes/win_slave"
+    ip: 192.168.33.103
+    mem: 2584

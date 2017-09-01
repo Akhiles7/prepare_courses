@@ -1,0 +1,8 @@
+---
+- name: Prepare docker course
+  hosts: lgu
+  become: true
+  
+  roles:
+    - common
+    - common_ansible

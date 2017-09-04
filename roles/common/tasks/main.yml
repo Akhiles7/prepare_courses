@@ -7,7 +7,7 @@
     group: "root"
 - name: Update packages
   apt:
-    upgrade: yes
+    upgrade: no 
     update_cache: yes
 - name: Install Python Pip
   apt:

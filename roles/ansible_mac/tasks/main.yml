@@ -153,7 +153,7 @@
   lineinfile:
     dest: "{{ vbox.slave_win.folder }}/Vagrantfile"
     regexp: 'config.vm.synced_folder '
-    state: absent
+    line: 'config.vm.communicator = "winrm"'
 
 - block:
     - name: Poehali!

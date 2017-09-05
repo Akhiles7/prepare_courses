@@ -1,0 +1,17 @@
+---
+- name: Presentation remove
+  hosts: oxf
+  become: false
+  
+  tasks:
+    - name: Remove pres
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ course_path }}/Ansible_course_2.0.zip"
+        - "{{ course_path }}/home/devops/Ansible_course_2.0"
+    - name: rm
+      shell: rm tomcat*
+      args:
+        chdir: {{ course_path }}

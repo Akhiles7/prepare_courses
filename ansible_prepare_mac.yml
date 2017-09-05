@@ -1,0 +1,11 @@
+---
+- name: Ansible Course prepare playbook
+  hosts: oxf
+  become: no
+
+  environment:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+  roles:
+    - { role: common_ansible_mac, "ansible_os_family == 'Darwin'" }
+    - { role: ansible_mac, "ansible_os_family == 'Darwin'" }

@@ -1,0 +1,33 @@
+---
+- name: Copy Presentation
+  hosts: oxf
+  become: false
+  
+  tasks:
+    - name: Copy pres
+      copy:
+        src: ../upload/Ansible_course_2.0.zip
+        dest: "{{ course_path }}/Ansible_course_2.0.zip"
+        owner: devops
+        group: staff
+      tags:
+        - presa
+    - name: copy win
+      copy:
+        src: ../upload/tomcat_win.tar.gz
+        dest: ""{{ course_path }}/vms/shared/"
+        owner: devops
+        group: staff
+      tags:
+        - win
+    - name: copy
+      copy:
+        src: "{{ item }}"
+        dest: ""{{ course_path }}/vms/shared/"
+        owner: devops
+        group: staff
+      with_items:
+        - ../upload/tomcat_playbook_day1.yml
+        - ../upload/tomcat_service.j2
+      tags:
+        - example

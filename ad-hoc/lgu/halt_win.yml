@@ -1,0 +1,16 @@
+---
+- name: Stop Win Box
+  hosts: lgu
+  become: false
+  
+  tasks:
+    - name: Get running boxes IDs
+      shell: "vagrant global-status | grep running | grep ansible_win_slave | awk '{print $1}'"
+      register: vids
+    - debug: msg="WARNING! No running boxes were found"
+      when: vids.stdout_lines != "" #Find other way
+    - name: Stop boxes
+      shell: "vagrant halt {{ item }}"
+      args:
+        chdir: /opt/boxes/win_slave/
+      with_items: "{{ vids.stdout_lines }}"

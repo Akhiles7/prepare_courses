@@ -1,0 +1,15 @@
+---
+- name: Halt all boxes
+  hosts: lgu
+  become: false
+  
+  tasks:
+    - name: Get running boxes IDs
+      shell: "vagrant global-status | grep running | awk '{print $1}'"
+      register: vids
+    - debug: msg="Some running boxes were found. Stopping"
+      when: vids.stdout_lines != "" #Find other way
+    - name: Stop boxes
+      shell: "vagrant halt {{ item }}"
+      with_items: "{{ vids.stdout_lines }}"
+      when: vids.stdout_lines != ""

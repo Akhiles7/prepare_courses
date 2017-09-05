@@ -1,0 +1,33 @@
+---
+- name: Copy Presentation
+  hosts: lgu
+  become: false
+  
+  tasks:
+    - name: Copy pres
+      copy:
+        src: ../upload/Ansible_course_2.0.zip
+        dest: "{{ course_path }}/Ansible_course_2.0.zip"
+        owner: {{ course_user }}
+        group: {{ course_user }}
+      tags:
+        - presa
+    - name: copy win
+      copy:
+        src: ../upload/tomcat_win.tar.gz
+        dest: "{{ course_path }}/vms/shared/"
+        owner: {{ course_user }}
+        group: {{ course_user }}
+      tags:
+        - win
+    - name: copy tomcat
+      copy:
+        src: "{{ item }}"
+        dest: "{{ course_path }}/vms/shared/"
+        owner: {{ course_user }}
+        group: {{ course_user }}
+      with_items:
+        - ../upload/tomcat_playbook_day1.yml
+        - ../upload/tomcat_service.j2
+      tags:
+        - example

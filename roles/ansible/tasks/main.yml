@@ -95,14 +95,15 @@
     - name: Get running boxes IDs
       shell: "vagrant global-status | grep running | awk '{print $1}'"
       register: vids
-    - debug: msg="WARNING! No running boxes were found"
+    - debug: msg="Running boxes were found. Stopping"
       when: vids.stdout_lines != "" #Find other way
     - name: Stop and Destroy boxes
-      shell: "vagrant {{ item[0] }} {{ item[1] }}"
+      shell: "vagrant {{ item[0] }} {{ item[1] }} -f"
       with_nested:
         - [ 'halt', 'destroy' ]
         - "{{ vids.stdout_lines }}"
-      when: vids.stdout_lines != ""
+    - name: Prune Vagrant global status
+      shell: "vagrant global-status --prune"
     - name: Cleanup box folders
       file:
         state: "{{ item[0] }}"
@@ -111,7 +112,7 @@
         group: "{{ course_user }}"
       with_nested:
         - [ 'absent', 'directory' ]
-        - [ '{{ vbox.master.folder }}', '{{ vbox.slave_nix.folder }}', '{{ vbox.slave_win.folder }}']
+        - [ '{{ vbox.master.folder }}', '{{ vbox.slave_nix.folder }}', '{{ vbox.slave_win.folder }}', '/home/devops/vms/shared']
       become: true
   when: "'cleanup' in box_init"
   become: false
@@ -137,6 +138,11 @@
     - { name: "{{ slave_win_vbname[0] }}", ip: "{{ vbox.slave_win.ip }}", mem: "{{ vbox.slave_win.mem }}", dest: "{{ vbox.slave_win.folder }}" }
   become: false
 
+- name: Change Win Vagrant file
+  shell: sed -i '/config.vm.synced_folder.*$/d' Vagrantfile
+  args:
+    chdir: "{{ vbox.slave_win.folder }}"
+
 - block:
     - name: Poehali!
       shell: vagrant up
@@ -146,6 +152,7 @@
         - "{{ vbox.master.folder }}"
         - "{{ vbox.slave_nix.folder }}"
         - "{{ vbox.slave_win.folder }}"
+      ignore_errors: true
     - name: Check if everything is started
       shell: "vagrant global-status | grep running | grep {{ item }}"
       register: vbup

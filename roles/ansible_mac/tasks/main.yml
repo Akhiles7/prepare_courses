@@ -4,8 +4,8 @@
       file:
         state: "{{ item }}"
         path: "{{ prep_box_path }}"
-        owner: "{{ course_user }}"
-        group: "{{ course_user }}"
+        owner: "{{ ansible_user }}"
+        group: staff
       with_items:
         - absent
         - directory
@@ -118,11 +118,11 @@
       file:
         state: "{{ item[0] }}"
         path: "{{ item[1] }}"
-        owner: "{{ course_user }}"
-        group: "{{ course_user }}"
+        owner: "{{ ansible_user }}"
+        group: staff
       with_nested:
         - [ 'absent', 'directory' ]
-        - [ '{{ vbox.master.folder }}', '{{ vbox.slave_nix.folder }}', '{{ vbox.slave_win.folder }}', '/home/devops/vms/shared']
+        - [ '{{ vbox.master.folder }}', '{{ vbox.slave_nix.folder }}', '{{ vbox.slave_win.folder }}', '/Users/devops/ansible_course/vms/shared']
       become: true
   when: "'cleanup' in box_init"
   become: false

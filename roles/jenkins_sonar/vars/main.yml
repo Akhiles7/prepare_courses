@@ -3,6 +3,7 @@
 course_name: gjs
 old_course_path: "/home/devops"
 course_path: "{{ old_course_path }}/{{ course_name }}"
+repo_path: "{{ course_path }}/jenkins-pipeline-workshop"
 
 #Docker repo
 key_server: "hkp://p80.pool.sks-keyservers.net:80"

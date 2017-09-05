@@ -11,10 +11,10 @@ services:
       - socatdockersock
     privileged: true
     volumes:
-      - {{ course_path }}/jenkins0:/var/jenkins_home
-      - {{ course_path }}/jenkins-backup:/var/jenkins_backup
-      - {{ course_path }}/jenkins-workspace:/home/jenkins
-      - {{ course_path }}/jenkins-workspace/.jenkins:/home/jenkins/.jenkins
+      - {{ repo_path }}/jenkins0:/var/jenkins_home
+      - {{ repo_path }}/jenkins-backup:/var/jenkins_backup
+      - {{ repo_path }}/jenkins-workspace:/home/jenkins
+      - {{ repo_path }}/jenkins-workspace/.jenkins:/home/jenkins/.jenkins
 
   socatdockersock:
     image: {{ image.socat }}
@@ -27,14 +27,14 @@ services:
     ports:
       - 9030:8080
     volumes:
-      - {{ course_path }}/juseppe:/juseppe/plugins
+      - {{ repo_path }}/juseppe:/juseppe/plugins
     environment:
       JUSEPPE_BASE_URI: "http://juseppe:8080"
 
   nexus:
     image: {{ image.nexus }}
     volumes:
-      - {{ course_path }}/nexus-data:/nexus-data
+      - {{ repo_path }}/nexus-data:/nexus-data
     ports:
       - 8088:8081
       - 20000:20000
@@ -47,7 +47,7 @@ services:
       - 7999:7999
       - 7990:7990
     volumes:
-      - {{ course_path }}/bitbucket:/var/atlassian/application-data/bitbucket
+      - {{ repo_path }}/.bitbucket:/var/atlassian/application-data/bitbucket
 
   sonar:
     image: {{ image.sonar }}
@@ -55,7 +55,7 @@ services:
       - 9000:9000
       - 9092:9092
     volumes:
-      - {{ course_path }}/sonarqube/conf:/opt/sonarqube/conf
-      - {{ course_path }}/sonarqube/data:/opt/sonarqube/data
-      - {{ course_path }}/sonarqube/extensions:/opt/sonarqube/extensions
-      - {{ course_path }}/sonarqube/plugins:/opt/sonarqube/lib/bundled-plugins
+      - {{ repo_path }}/sonarqube_new/conf:/opt/sonarqube/conf
+      - {{ repo_path }}/sonarqube_new/data:/opt/sonarqube/data
+      - {{ repo_path }}/sonarqube_new/extensions:/opt/sonarqube/extensions
+      - {{ repo_path }}/sonarqube_new/plugins:/opt/sonarqube/lib/bundled-plugins

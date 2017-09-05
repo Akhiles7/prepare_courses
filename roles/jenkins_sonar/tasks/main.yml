@@ -32,12 +32,50 @@
     - docker==2.0.1
     - docker-compose
 
+- name: Create course path
+  file:
+    path: "{{ course_path }}"
+    state: directory
+    mode: 0755
+    owner: "{{ course_user }}"
+    group: "{{ course_user }}"
+  tags: dirs
+
+- name: Remove old Docker compose file
+  file:
+    state: absent
+    path: "{{ old_course_path }}/docker-compose.yml"
+  tags: docker-compose
+
 - name: Move Docker compose file
   template:
     src: docker-compose.j2
     dest: "{{ course_path }}/docker-compose.yml"
     owner: "{{ course_user }}"
     group: "{{ course_user }}"
+  tags: docker-compose
+
+- name: Remove old directories
+  file:
+    path: "{{ item }}"
+    state: absent 
+  with_items:
+    - "{{ old_course_path }}/bitbucket/"
+    - "{{ old_course_path }}/jenkins-backup/"
+    - "{{ old_course_path }}/jenkins-workspace/"
+    - "{{ old_course_path }}/jenkins-workspce/"
+    - "{{ old_course_path }}/artifactory/"
+    - "{{ old_course_path }}/nexus-data/"
+    - "{{ old_course_path }}/nginx/"
+    - "{{ old_course_path }}/sonarqube/"
+    - "{{ old_course_path }}/juseppe/"
+    - "{{ old_course_path }}/.juseppe/"
+    - "{{ old_course_path }}/jenkins0"
+    - "{{ old_course_path }}/.jenkins/"
+    - "{{ old_course_path }}/jenkins-pipeline-workshop/"
+    - "{{ old_course_path }}/workspace/"
+    - "{{ old_course_path }}/Downloads/slave.jar"
+  tags: dirs
 
 - name: Prepare directories
   file:
@@ -59,20 +97,22 @@
     - "{{ course_path }}/sonarqube/extensions"
     - "{{ course_path }}/sonarqube/plugins"
     - "{{ course_path }}/juseppe"
+  tags: dirs
 
 - name: Cloning jenkins-pipeline-workshop repo
   git:
-    repo: "https://github.com/aatarasoff/jenkins-pipeline-workshop"
+    repo: "https://github.com/gavriluk/jenkins-pipeline-workshop"
     dest: "{{ course_path }}/jenkins-pipeline-workshop"
     force: yes
+  tags: repo
 
 - name: Prepare .jenkins-workspace
-    file:
-      path: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins-workspace"
-      state: directory
-      owner: 10000
-      group: 10000
-      mode: 0755
+  file:
+    path: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins-workspace"
+    state: directory
+    owner: 10000
+    group: 10000
+    mode: 0755
 
 - name: Create symlink for jenkins0
   file:
@@ -83,20 +123,18 @@
     state: link
     force: yes
 
-- block: Correct permissions 
-    - name: Fix .jenkins0 chmod
-      file:
-        path: "{{ course_path }}/jenkins-pipeline-workshop"
-        owner: "{{ course_user }}"
-        group: "{{ course_user }}"
-        recurse: yes
-    - name: Fix nexus chmod
-      file:
-        path: "{{ course_path }}/nexus-data"
-        owner: 200
-        group: 200
-        recurse: yes
-  tags: correct_perms
+- name: Fix .jenkins0 chmod
+  file:
+    path: "{{ course_path }}/jenkins-pipeline-workshop"
+    owner: "{{ course_user }}"
+    group: "{{ course_user }}"
+    recurse: yes
+- name: Fix nexus chmod
+  file:
+    path: "{{ course_path }}/nexus-data"
+    owner: 200
+    group: 200
+    recurse: yes
 
 - name: Adding user {{ course_user }} into docker group
   user: 

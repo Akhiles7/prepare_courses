@@ -1,4 +1,9 @@
 ---
+# Git Jenkins Sonarqube
+course_name: gjs
+old_course_path: "/home/devops"
+course_path: "{{ old_course_path }}/{{ course_name }}"
+
 #Docker repo
 key_server: "hkp://p80.pool.sks-keyservers.net:80"
 repo_server: "deb https://apt.dockerproject.org/repo ubuntu-xenial main"

@@ -11,7 +11,7 @@ services:
       - socatdockersock
     privileged: true
     volumes:
-      - {{ repo_path }}/jenkins0:/var/jenkins_home
+      - {{ repo_path }}/.jenkins0:/var/jenkins_home
       - {{ repo_path }}/jenkins-backup:/var/jenkins_backup
       - {{ repo_path }}/jenkins-workspace:/home/jenkins
       - {{ repo_path }}/jenkins-workspace/.jenkins:/home/jenkins/.jenkins

@@ -1,0 +1,19 @@
+---
+- name: Remove git global config
+  file:
+    state: absent
+    path: "{{ git_global_config }}"
+  when: clean
+  tags: dirs
+
+- name: Remove old dirs
+  file:
+    state: absent
+    path: "{{ item }}"
+  with_items:
+    - "{{ course_path }}"
+    - "{{ course_user_home }}/jenkins-pipeline-workshop"
+    - "{{ course_user_home }}/jenkins-pipeline-live-demo"
+  when: clean
+  tags: dirs
+

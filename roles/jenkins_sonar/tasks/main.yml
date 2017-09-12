@@ -1,4 +1,7 @@
 ---
+- name: Check clean
+  include: "clean.yml"
+
 - name: Add key
   apt_key:
     keyserver: "{{ key_server }}"
@@ -15,10 +18,11 @@
     state: latest
     update_cache: yes
 
-- name: Enable Docker service
+- name: Enable and restart Docker service
   service:
     name: docker
     enabled: yes
+    state: restarted
 
 - shell: docker -v
   register: dout
@@ -31,6 +35,14 @@
   with_items:
     - docker==2.0.1
     - docker-compose
+  tags: docker
+
+- name: Adding user {{ course_user }} into docker group
+  user: 
+    name: "{{ course_user }}"
+    groups: docker
+    append: yes
+  tags: docker
 
 - name: Create course path
   file:
@@ -41,96 +53,62 @@
     group: "{{ course_user }}"
   tags: dirs
 
-- name: Remove old Docker compose file
-  file:
-    state: absent
-    path: "{{ old_course_path }}/docker-compose.yml"
-  tags: docker-compose
-
-- name: Move Docker compose file
-  template:
-    src: docker-compose.j2
-    dest: "{{ course_path }}/docker-compose.yml"
-    owner: "{{ course_user }}"
-    group: "{{ course_user }}"
-  tags: docker-compose
-
 - name: Cloning jenkins-pipeline-workshop repo
   git:
-    repo: "https://github.com/gavriluk/jenkins-pipeline-workshop"
-    dest: "{{ course_path }}/jenkins-pipeline-workshop"
+    repo: "{{ repo_url }}"
+    dest: "{{ repo_path }}"
     force: yes
   tags: repo
 
+- name: Change hosts file for jenkins-pipeline-workshop
+  template:
+    src: hosts.j2
+    dest: "/etc/hosts"
+  tags: docker
+
 - name: Prepare directories
   file:
-    path: "{{ item }}"
+    path: "{{ repo_path }}"
     state: directory
+    recurse: yes
     owner: "{{ course_user }}"
     group: "{{ course_user }}"
     mode: 0777 #For training course only!
-  with_items:
-    - "{{ repo_path }}/bitbucket"
-    - "{{ repo_path }}/jenkins"
-    - "{{ repo_path }}/jenkins-backup"
-    - "{{ repo_path }}/jenkins-workspace/.jenkins"
-    - "{{ repo_path }}/artifactory"
-    - "{{ repo_path }}/nexus-data"
-    - "{{ repo_path }}/nginx"
-    - "{{ repo_path }}/sonarqube"
-    - "{{ repo_path }}/sonarqube/conf"
-    - "{{ repo_path }}/sonarqube/data"
-    - "{{ repo_path }}/sonarqube/extensions"
-    - "{{ repo_path }}/sonarqube/plugins"
-    - "{{ repo_path }}/juseppe"
   tags: dirs
-
-- name: Prepare .jenkins-workspace
-  file:
-    path: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins-workspace"
-    state: directory
-    owner: 10000
-    group: 10000
-    mode: 0755
-
-- name: Create symlink for jenkins0
-  file:
-    src: "{{ course_path }}/jenkins-pipeline-workshop/.jenkins0"
-    dest: "{{ course_path }}/jenkins0"
-    owner: "{{ course_user }}"
-    group: "{{ course_user }}"
-    state: link
-    force: yes
-
-- name: Fix .jenkins0 chmod
-  file:
-    path: "{{ course_path }}/jenkins-pipeline-workshop"
-    owner: "{{ course_user }}"
-    group: "{{ course_user }}"
-    recurse: yes
-
-- name: Fix nexus chmod
-  file:
-    path: "{{ repo_path }}/nexus-data"
-    owner: 200
-    group: 200
-    recurse: yes
-
-- name: Adding user {{ course_user }} into docker group
-  user: 
-    name: "{{ course_user }}"
-    groups: docker
-    append: yes
 
 - name: Pull Slave image #Need to move this to docker-compose!
   ignore_errors: True
   docker_image:
     name: "{{ image.slave }}" 
     pull: yes 
-  tags: pull-slave-image
+  tags: docker, pull-slave-image
 
 - name: Pull Docker images
   ignore_errors: True
   docker_service:
-    project_src: "{{ course_path }}"
+    project_src: "{{ repo_path }}"
     pull: yes
+  tags: docker
+
+- name: Create directory for IDEA
+  file:
+    path: "{{ idea_path }}"
+    state: directory
+    mode: 0755
+    owner: "{{ course_user }}"
+    group: "{{ course_user }}"
+  tags: dirs,idea
+
+- name: "Check {{ idea_path }} size"
+  shell: "du -hsb {{ idea_path }} | cut -f1"
+  register: isout
+  tags: idea
+
+- name: Unarchive IDEA
+  unarchive:
+    src: "{{ idea_url }}"
+    dest: "{{ idea_path }}"
+    remote_src: yes
+    creates: no
+  when: isout.stdout|int < 871000000 
+  tags: idea

@@ -6,3 +6,6 @@
   roles:
     - common
     - jenkins_sonar
+
+  vars:
+    clean: false 

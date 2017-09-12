@@ -1,1 +1,2 @@
-Set SUID, SGID for devops user home folder. Else docker create folder with incorrect permissions.
+1) Merge ansible and ansible_mac role - see if we can make it System independent (siwtch different parameters for different OS types)
+2) Set SUID, SGID for devops user home folder. Else docker create folder with incorrect permissions.

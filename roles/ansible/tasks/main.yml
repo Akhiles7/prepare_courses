@@ -4,8 +4,8 @@
       file:
         state: "{{ item }}"
         path: "{{ prep_box_path }}"
-        owner: "{{ course_user }}"
-        group: "{{ course_user }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
       with_items:
         - absent
         - directory
@@ -108,8 +108,8 @@
       file:
         state: "{{ item[0] }}"
         path: "{{ item[1] }}"
-        owner: "{{ course_user }}"
-        group: "{{ course_user }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
       with_nested:
         - [ 'absent', 'directory' ]
         - [ '{{ vbox.master.folder }}', '{{ vbox.slave_nix.folder }}', '{{ vbox.slave_win.folder }}', '/home/devops/vms/shared']
@@ -139,9 +139,10 @@
   become: false
 
 - name: Change Win Vagrant file
-  shell: sed -i '/config.vm.synced_folder.*$/d' Vagrantfile
-  args:
-    chdir: "{{ vbox.slave_win.folder }}"
+  lineinfile:
+    dest: "{{ vbox.slave_win.folder }}/Vagrantfile"
+    regexp: 'config.vm.synced_folder '
+    line: 'config.vm.communicator = "winrm"'
 
 - block:
     - name: Poehali!

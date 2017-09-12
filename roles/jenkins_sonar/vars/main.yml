@@ -24,7 +24,7 @@ image:
   slave: lavcraft/jnlp-slave-dind
 
 # Git
-git_global_config: "{{ course_user }}/.gitconfig"
+git_global_config: "{{ ansible_user }}/.gitconfig"
 
 # SQ
 idea_url: "https://download.jetbrains.com/idea/ideaIC-2017.2.3.tar.gz"

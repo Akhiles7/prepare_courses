@@ -24,8 +24,8 @@
   file:
     path: "{{ item }}"
     state: directory
-    owner: "{{ course_user }}"
-    group: "{{ course_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   with_items:
     - "{{ prep_box_path }}"
     - "/opt/boxes"

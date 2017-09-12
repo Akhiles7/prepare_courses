@@ -37,9 +37,9 @@
     - docker-compose
   tags: docker
 
-- name: Adding user {{ course_user }} into docker group
+- name: Adding user {{ ansible_user }} into docker group
   user: 
-    name: "{{ course_user }}"
+    name: "{{ ansible_user }}"
     groups: docker
     append: yes
   tags: docker
@@ -49,8 +49,8 @@
     path: "{{ course_path }}"
     state: directory
     mode: 0755
-    owner: "{{ course_user }}"
-    group: "{{ course_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   tags: dirs
 
 - name: Cloning jenkins-pipeline-workshop repo
@@ -71,8 +71,8 @@
     path: "{{ repo_path }}"
     state: directory
     recurse: yes
-    owner: "{{ course_user }}"
-    group: "{{ course_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0777 #For training course only!
   tags: dirs
 
@@ -95,8 +95,8 @@
     path: "{{ idea_path }}"
     state: directory
     mode: 0755
-    owner: "{{ course_user }}"
-    group: "{{ course_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
   tags: dirs,idea
 
 - name: "Check {{ idea_path }} size"

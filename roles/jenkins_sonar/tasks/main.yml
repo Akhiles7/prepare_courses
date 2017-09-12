@@ -35,12 +35,14 @@
   with_items:
     - docker==2.0.1
     - docker-compose
+  tags: docker
 
 - name: Adding user {{ course_user }} into docker group
   user: 
     name: "{{ course_user }}"
     groups: docker
     append: yes
+  tags: docker
 
 - name: Create course path
   file:
@@ -57,6 +59,12 @@
     dest: "{{ repo_path }}"
     force: yes
   tags: repo
+
+- name: Change hosts file for jenkins-pipeline-workshop
+  template:
+    src: hosts.j2
+    dest: "/etc/hosts"
+  tags: docker
 
 - name: Prepare directories
   file:

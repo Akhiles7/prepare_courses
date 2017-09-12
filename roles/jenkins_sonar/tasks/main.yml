@@ -104,11 +104,6 @@
   register: isout
   tags: idea
 
-- debug:
-    msg: "{{ idea_path }} size is {{ isout }}"
-  when: isout is defined
-  tags: idea
-
 - name: Unarchive IDEA
   unarchive:
     src: "{{ idea_url }}"

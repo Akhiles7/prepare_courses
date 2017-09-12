@@ -1,4 +1,7 @@
 ---
+- name: Check clean
+  include: "clean.yml"
+
 - name: Add key
   apt_key:
     keyserver: "{{ key_server }}"
@@ -15,10 +18,11 @@
     state: latest
     update_cache: yes
 
-- name: Enable Docker service
+- name: Enable and restart Docker service
   service:
     name: docker
     enabled: yes
+    state: restarted
 
 - shell: docker -v
   register: dout
@@ -37,15 +41,6 @@
     name: "{{ course_user }}"
     groups: docker
     append: yes
-
-- name: Remove old dirs
-  file:
-    state: absent
-    path: "{{ item }}"
-  with_items:
-    - "{{ course_path }}"
-    - "/home/devops/jenkins-pipeline-workshop"
-  tags: dirs
 
 - name: Create course path
   file:
@@ -73,19 +68,19 @@
     mode: 0777 #For training course only!
   tags: dirs
 
-
 - name: Pull Slave image #Need to move this to docker-compose!
   ignore_errors: True
   docker_image:
     name: "{{ image.slave }}" 
     pull: yes 
-  tags: pull-slave-image
+  tags: docker, pull-slave-image
 
 - name: Pull Docker images
   ignore_errors: True
   docker_service:
     project_src: "{{ repo_path }}"
     pull: yes
+  tags: docker
 
 - name: Create directory for IDEA
   file:
@@ -114,5 +109,3 @@
     creates: no
   when: isout.stdout|int < 871000000 
   tags: idea
-
-

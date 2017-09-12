@@ -1,6 +1,7 @@
 ---
 # Git Jenkins Sonarqube
 course_name: gjs
+course_user_home: "/home/devops"
 old_course_path: "/home/devops"
 course_path: "{{ old_course_path }}/{{ course_name }}"
 repo_path: "{{ course_path }}/jenkins-pipeline-workshop"
@@ -21,6 +22,9 @@ image:
   ldap: lavcraft/slapd:test
   sonar: sonarqube:6.4-alpine
   slave: lavcraft/jnlp-slave-dind
+
+# Git
+git_global_config: "{{ course_user }}/.gitconfig"
 
 # SQ
 idea_url: "https://download.jetbrains.com/idea/ideaIC-2017.2.3.tar.gz"

@@ -1,0 +1,5 @@
+---
+vagrant_vers: 1.9.4
+course_path: "/Users/devops/gjs_course"
+prep_box_path: "/Users/devops/prepare/boxes"
+gjs_user: devops

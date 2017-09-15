@@ -1,0 +1,11 @@
+---
+- name: Git-Jenkins-Sonar Course prepare playbook
+  hosts: oxf
+  become: no
+
+  environment:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+  roles:
+    - { role: common_gjs_mac, "gjs_os_family == 'Darwin'" }
+    - { role: gjs_mac, "gjs_os_family == 'Darwin'" }

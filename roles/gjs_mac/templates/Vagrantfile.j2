@@ -1,0 +1,17 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.box = "sbt/{{ item.name }}"
+  config.vm.network "forwarded_port", guest: 7990, host: 7990
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.network "forwarded_port", guest: 8081, host: 8081
+  config.vm.network "forwarded_port", guest: 9000, host: 9000
+  config.vm.network "private_network", ip: "{{ item.ip }}"
+  config.vm.synced_folder "{{ course_path }}/vms/shared", "/shared_data"
+  config.vm.provider "virtualbox" do |vb|
+     vb.name = "{{ item.name }}"
+     vb.memory = "{{ item.mem }}"
+  end
+  config.vm.define "{{ item.name }}" do |t|
+  end
+end

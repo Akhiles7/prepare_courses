@@ -1,0 +1,11 @@
+---
+#Boxes
+# For URLs: need to think another place! Maybe Hashicorp Vagrant repo
+vbox:
+  BbJeNeS:
+    name: BbJeNeS.box
+    md5: 5a6d00cb940fd58316c8d5f8a41525df
+    url: https://drive.google.com/uc?authuser=0&id=0B6Fexn49Wvema2E2RU5UVXJYNTQ&export=download
+    folder: "{{ course_path }}/boxes/BbJeNeS"
+    ip: 192.168.33.104
+    mem: 6144 

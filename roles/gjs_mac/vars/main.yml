@@ -6,6 +6,7 @@ vbox:
     name: BbJeNeS.box
     md5: 1ba53bff731cd36adae09f292996a3a0 # v0.6 
     url:
+    src: /Users/devops/prepare/boxes/BbJeNeS.box 
     folder: "{{ course_path }}/boxes/BbJeNeS"
     ip: 192.168.33.104
     mem: 6144 

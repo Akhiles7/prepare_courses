@@ -11,7 +11,7 @@
         - directory
     - name: Remote download
       debug: "msg='Uploading from internet'"
-    - name: Download boxes
+    - name: Remote download boxes
       get_url:
         url: "{{ item.box_url }}"
         dest: "{{ prep_box_path }}/{{ item.box }}"
@@ -21,7 +21,20 @@
     - debug: "msg='All ok!'"
   when: "'remote' in box_src"
   tags: prep_boxes
-  
+
+- block:
+    - name: Local download boxes
+      copy:
+        src: "{{ item.box_src }}"
+        remote_src: no
+        dest: "{{ prep_box_path }}/{{ item.box }}"
+      with_items:
+        - { box: "{{ vbox.BbJeNeS.name }}", box_md5: "{{ vbox.BbJeNeS.md5 }}", box_src: "{{ vbox.BbJeNeS.src }}" }
+    - debug: "msg='All ok!'"
+  when: "'local' in box_src"
+  tags: prep_boxes
+
+
 - block:
     - name: Check the folder exist
       stat:
@@ -124,7 +137,7 @@
     executable: /bin/bash
   register: vinit
   with_items:
-    - { name: "{{ BbJeNeS_vbname[0] }}", dest: "{{ vbox.BbNeJeS.folder }}" }
+    - { name: "{{ BbJeNeS_vbname[0] }}", dest: "{{ vbox.BbJeNeS.folder }}" }
   become: false
 
 - name: Upload Vagrant files

@@ -112,7 +112,7 @@
         group: staff
       with_nested:
         - [ 'absent', 'directory' ]
-        - [ '{{ vbox.BbJeNeS.folder }}', '/Users/devops/ansible_course/vms/shared']
+        - [ '{{ vbox.BbJeNeS.folder }}', '/Users/devops/gjs_course/vms/shared']
       become: true
   when: "'cleanup' in box_init"
   become: false

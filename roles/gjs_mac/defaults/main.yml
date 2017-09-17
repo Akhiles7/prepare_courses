@@ -2,7 +2,7 @@
 # Variable 'box_srv' required for two different variants of getting boxes:
 # local - boxes should be uploaded in local folder /opt/prepare/boxes BEFORE running playbook
 # remote - boxes will be uploaded from Internet (Google Drive or Hashicorp repos)
-box_src: local
+box_src: local 
 # Variable 'box_add' required for two different variants of adding boxes:
 # asis - do not replace boxes if they already added in system, in case they are not - they will be added.
 # update - replace boxes even of they already added in system (in case if update required)

@@ -1,4 +1,5 @@
 ---
 course_path: "/Users/devops/ansible_course"
+gjs_course_path: "/Users/devops/gjs_course"
 prep_box_path: "/Users/devops/prepare/boxes"
 ansible_user: devops

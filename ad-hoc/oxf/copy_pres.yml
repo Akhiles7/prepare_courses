@@ -12,22 +12,36 @@
         group: staff
       tags:
         - presa
+
+    - debug:
+        msg: "{{ course_path }}/Ansible_course_2.0.zip"
+
     - name: copy win
       copy:
         src: ../upload/tomcat_win.tar.gz
-        dest: ""{{ course_path }}/vms/shared/"
+        dest: "{{ course_path }}/vms/shared/"
         owner: devops
         group: staff
       tags:
         - win
-    - name: copy
+    - name: copy template
       copy:
         src: "{{ item }}"
-        dest: ""{{ course_path }}/vms/shared/"
+        dest: "{{ course_path }}/vms/shared/"
+        owner: devops
+        group: staff
+      with_items:
+        - ../upload/tomcat_service.j2
+      tags:
+        - template
+    - name: copy playbook
+      copy:
+        src: "{{ item }}"
+        dest: "{{ course_path }}/vms/shared/"
         owner: devops
         group: staff
       with_items:
         - ../upload/tomcat_playbook_day1.yml
-        - ../upload/tomcat_service.j2
       tags:
-        - example
+        - playbook
+

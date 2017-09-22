@@ -10,3 +10,11 @@ vbox:
     folder: "{{ course_path }}/boxes/BbJeNeS"
     ip: 192.168.33.104
     mem: 6144 
+
+bitbucket:
+  hostname: bitbucket.local
+  port: 7990
+
+jenkins:
+  hostname: jenkins.local
+  port: 8080

@@ -8,4 +8,6 @@
  
   tasks:
     - name: Start VirtualBox
-      shell: /usr/local/bin/virtualbox --normal
+      shell: "/usr/local/bin/virtualbox --normal"
+      args:
+        executable: /bin/bash

@@ -12,6 +12,6 @@
         - "{{ course_path }}/Ansible_course_2.0.zip"
         - "{{ course_path }}/home/devops/Ansible_course_2.0"
     - name: rm
-      shell: rm tomcat*
+      shell: rm -r Ansible*
       args:
-        chdir: {{ course_path }}
+        chdir: "{{ course_path }}"

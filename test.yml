@@ -1,0 +1,21 @@
+---
+- name: Ansible Course prepare playbook
+  hosts: oxf
+  become: no
+
+  environment:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+  tasks:
+    #- name: Change Win Vagrant file
+    #  lineinfile:
+    #    dest: "/Users/devops/ansible_course/boxes/win_slave/Vagrantfile"
+    #    insertafter: 'config.vm.network '
+        #regexp: 'config.vm.communicator '
+        #state: absent
+    #    line: 'config.vm.communicator = "winrm"'
+    - name: Change Win Vagrant file
+      lineinfile:
+        dest: "/Users/devops/ansible_course/boxes/win_slave/Vagrantfile"
+        regexp: 'config.vm.communicator '
+        line: 'config.vm.communicator = "winrm"'

@@ -10,9 +10,6 @@
     admin_user: admin
     admin_pass: admin123
   
-  #environment:
-  #  JAVA_HOME: /etc/alternatives/jre_1.8.0
-
   tasks:
     - name: Stop Apache Web Server
       service:
@@ -62,7 +59,6 @@
         regexp: '<Connector port="8080" '
         line: '<Connector port="{{ tomcat_port }}" protocol="HTTP/1.1"'
         state: present
-        backrefs: yes
       notify:
         - restart tomcat
     - name: Configure Tomcat User
@@ -86,6 +82,11 @@
         name: tomcat
       register: tomcat_out
       failed_when: not 'running' in tomcat_out.status.SubState
+
+    - debug:
+        var: tomcat_out
+        verbosity: 1
+
     - name: Deploy test app
       copy:
         src: /opt/soft/nix/ansible-demo-app.war

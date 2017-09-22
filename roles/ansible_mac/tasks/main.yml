@@ -41,7 +41,7 @@
       with_items:
         - { box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
         - { box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
-        - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
+#        - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
     - debug: "msg='All ok!'"
   when: "'local' in box_src"
   tags: prep_boxes
@@ -110,6 +110,8 @@
       with_nested:
         - [ 'halt', 'destroy' ]
         - "{{ vids.stdout_lines }}"
+    - name: Force remove all vms
+      shell: "for f in `vboxmanage list vms | awk '{print $2}'`;do vboxmanage unregistervm --delete $f ;done"
     - name: Prune Vagrant global status
       shell: "/usr/local/bin/vagrant global-status --prune"
       args:

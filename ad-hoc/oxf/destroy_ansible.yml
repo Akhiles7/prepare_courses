@@ -1,0 +1,19 @@
+---
+- name: Destroy ansible boxes
+  hosts: oxf
+  become: false
+  
+  environment: 
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+ 
+  tasks:
+    - name: Destroing ansible boxes
+      shell: /usr/local/bin/vagrant destroy -f
+      args:
+        chdir: "{{ item }}"
+        executable: /bin/bash
+      with_items:
+        - "{{ course_path }}/boxes/master"
+        - "{{ course_path }}/boxes/nix_slave"
+        - "{{ course_path }}/boxes/win_slave"
+      ignore_errors: true

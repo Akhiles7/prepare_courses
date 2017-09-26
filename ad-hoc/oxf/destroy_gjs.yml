@@ -1,0 +1,17 @@
+---
+- name: Destroy gjs boxes
+  hosts: oxf
+  become: false
+  
+  environment: 
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+ 
+  tasks:
+    - name: Destroing gjs boxes 
+      shell: /usr/local/bin/vagrant destroy -f
+      args:
+        chdir: "{{ item }}"
+        executable: /bin/bash
+      with_items:
+        - "{{ gjs_course_path }}/boxes/BbJeNeS"
+      ignore_errors: true

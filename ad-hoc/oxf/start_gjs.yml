@@ -22,6 +22,4 @@
       register: vbup
       failed_when: vbup.rc > 0
       with_items:
-      # - ansible_nix_master
-      # - ansible_nix_slave
-       - ansible_win_slave
+        - BbJeNeS 

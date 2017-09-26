@@ -23,6 +23,7 @@
     name: docker
     enabled: yes
     state: restarted
+  tags: docker-restart
 
 - shell: docker -v
   register: dout
@@ -36,6 +37,25 @@
     - docker==2.0.1
     - docker-compose
   tags: docker
+
+- name: Docker ps
+  shell: "docker ps -q -a"
+  register: dockerout
+  tags: docker, docker-clean, docker-stop
+
+- name: kill docker
+  shell: "docker kill {{ item }}"
+  args:
+    chdir: "{{ repo_path }}"
+  ignore_errors: yes
+  with_items: "{{ dockerout.stdout.split('\n') }}"
+  tags: docker, docker-clean, docker-stop
+
+- name: rm docker
+  shell: "docker rm -f {{ item }}"
+  tags: docker-clean
+  ignore_errors: yes
+  with_items: "{{ dockerout.stdout.split('\n') }}"
 
 - name: Adding user {{ course_user }} into docker group
   user: 
@@ -88,7 +108,7 @@
   docker_service:
     project_src: "{{ repo_path }}"
     pull: yes
-  tags: docker
+  tags: docker, docker-restart
 
 - name: Create directory for IDEA
   file:
@@ -112,3 +132,5 @@
     creates: no
   when: isout.stdout|int < 871000000 
   tags: idea
+
+

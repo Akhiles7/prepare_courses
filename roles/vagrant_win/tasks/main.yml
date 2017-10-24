@@ -1,7 +1,6 @@
 ---
 # tasks file for vagrant_win/
 - name: Install vagrant
-  
   block:
     - name: "Create folder for downloads: {{ downloads }}"
       win_file:
@@ -20,3 +19,17 @@
         arguments: "/quiet /norestart"
         state: present
   tags: install
+
+- name: Copy boxes
+  block:
+    - debug:
+        msg: Copy boxes
+  when: boxes is defined
+  tags: copy_boxes
+
+- name: Vagrant up boxes
+  block:
+    - debug:
+        msg: up
+  when: boxes is defined
+  tags: up

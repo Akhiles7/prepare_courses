@@ -1,17 +1,19 @@
 ---
 # tasks file for vagrant_win/
-- fail:
-  when: ansible_distribution != "Майкрософт Windows 10 Pro"
-
 - name: Install vagrant
   
   block:
-    - name: Download vagrant box
+    - name: "Create folder for downloads: {{ downloads }}"
+      win_file:
+        path: "{{ downloads }}"
+        state: directory
+    - name: Download vagrant distrib 
       win_get_url:
         url: "{{ vagrant.distrib.url }}"
         dest: "{{ downloads }}"
+        force: no
       register: downlout 
-    - name: Install virtualbox
+    - name: Install vagrant
       win_package:
         path: "{{ downlout.dest }}"
         product_id: "{{ vagrant.distrib.product_id }}"

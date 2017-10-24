@@ -1,0 +1,8 @@
+---
+# vars file for virtualbox_win/
+virtualbox:
+  distrib:
+    url: http://download.virtualbox.org/virtualbox/5.1.30/VirtualBox-5.1.30-118389-Win.exe
+    product_id: '{1B0977F2AF27F624193BBEAE3AB0A1AB}'
+  extpack:
+    url: http://download.virtualbox.org/virtualbox/5.1.30/Oracle_VM_VirtualBox_Extension_Pack-5.1.30-118389.vbox-extpack

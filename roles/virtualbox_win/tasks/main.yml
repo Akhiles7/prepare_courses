@@ -1,15 +1,16 @@
 ---
 # tasks file for virtualbox_win/
-- fail:
-  when: ansible_distribution != "Майкрософт Windows 10 Pro"
-
 - name: Install virtualbox
-  
   block:
-    - name: Download virtual box
+    - name: "Create folder for downloads: {{ downloads }}"
+      win_file:
+        path: "{{ downloads }}"
+        state: directory
+    - name: Download virtualbox
       win_get_url:
         url: "{{ virtualbox.distrib.url }}"
         dest: "{{ downloads }}"
+        force: no
       register: downlout 
     - name: Install virtualbox
       win_package:

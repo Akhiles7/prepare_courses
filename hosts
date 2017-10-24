@@ -25,3 +25,17 @@
 #172.17.2.4 ansible_connection=local
 #172.17.2.5
 172.17.2.[2:17]
+
+[knopa]
+172.17.3.[21:70]
+#172.17.3.70
+
+[knopa:vars]
+ansible_user = DevOps
+ansible_password = 654321do
+ansible_port = 5986
+ansible_connection = winrm
+ansible_winrm_transport = basic 
+#ansible_winrm_cert_pem = /mnt/cert.pem
+#ansible_winrm_cert_key_pem = /mnt/cert.pem
+ansible_winrm_server_cert_validation = ignore

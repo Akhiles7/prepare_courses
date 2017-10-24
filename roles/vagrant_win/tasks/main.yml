@@ -1,0 +1,22 @@
+---
+# tasks file for vagrant_win/
+- name: Install vagrant
+  
+  block:
+    - name: "Create folder for downloads: {{ downloads }}"
+      win_file:
+        path: "{{ downloads }}"
+        state: directory
+    - name: Download vagrant distrib 
+      win_get_url:
+        url: "{{ vagrant.distrib.url }}"
+        dest: "{{ downloads }}"
+        force: no
+      register: downlout 
+    - name: Install vagrant
+      win_package:
+        path: "{{ downlout.dest }}"
+        product_id: "{{ vagrant.distrib.product_id }}"
+        arguments: "/quiet /norestart"
+        state: present
+  tags: install

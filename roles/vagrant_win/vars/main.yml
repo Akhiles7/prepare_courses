@@ -1,0 +1,6 @@
+---
+# vars file for vagrant_win/
+vagrant:
+  distrib:
+    url: "https://releases.hashicorp.com/vagrant/2.0.0/vagrant_2.0.0_x86_64.msi" 
+    product_id: '{69366E88-77F9-4358-891E-DC369C211601}'

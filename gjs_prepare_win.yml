@@ -1,0 +1,30 @@
+---
+- name: Git-Jenkins-Sonar Course prepare playbook
+  hosts: knopa 
+  become: no
+  
+  vars:
+    boxes:
+      BbJeNeS:
+        file: BbJeNeS.box
+        md5: 1ba53bff731cd36adae09f292996a3a0 # v0.6
+        url:
+        src: D:\Ansible\BbJeNeS.box
+        dest: D:\DevOps\boxes\ # directory
+        ip: 192.168.33.104
+        mem: 6144
+
+  pre_tasks:
+    - debug:
+        var: ansible_distribution
+        verbosity: 1
+    - fail:
+      when: "{{ ansible_distribution | match(\"Windows 10\") }}"
+    - name: Change standby timeout
+      win_command: POWERCFG -change -standby-timeout-ac 60
+
+  roles:
+    - { role: virtualbox_win, tags: ["install"] }
+    - { role: vagrant_win, tags: ["install"] }
+    - { role: vagrant_win, tags: ["copy_boxes"] }
+    - { role: vagrant_win, tags: ["up"] }

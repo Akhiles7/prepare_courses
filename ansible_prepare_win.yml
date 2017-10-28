@@ -1,0 +1,48 @@
+---
+- name: Ansible Course prepare playbook
+  hosts: knopa 
+  become: no
+  
+  vars:
+    course_path: "D:\\DevOps\\ansible_course"
+    boxes:
+      master:
+        box_name: ansible_nix_master 
+        file: ansible_nix_master.box
+        md5: 5a6d00cb940fd58316c8d5f8a41525df
+        url: 
+        src: "/mnt" # directory
+        dest: "{{ course_path }}/boxes/master"
+        ip: 192.168.33.101
+        mem: 1024
+      slave_nix:
+        box_name: ansible_nix_slave
+        file: ansible_nix_slave.box
+        md5: 135395388abd2fbdc080f81b4e9831a2
+        url:
+        src: "/mnt" # directory
+        dest: "{{ course_path }}/boxes/nix_slave"
+        ip: 192.168.33.102
+        mem: 1024
+      slave_win:
+        box_name: ansible_win_slave
+        file: ansible_win_slave.box
+        md5: 2ee65e11023725e6ad48e239b35b2141
+        url:
+        src: "/mnt" # directory
+        dest: "{{ course_path }}/boxes/win_slave"
+        ip: 192.168.33.103
+        mem: 2584
+
+  pre_tasks:
+    - debug:
+        var: ansible_distribution
+        verbosity: 1
+    - fail:
+      when: "{{ ansible_distribution | match(\"Windows 10\") }}"
+    - name: Change standby timeout
+      win_command: POWERCFG -change -standby-timeout-ac 1440 
+
+  roles:
+    - { role: virtualbox_win }
+    - { role: vagrant_win }

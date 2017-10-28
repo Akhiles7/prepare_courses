@@ -36,7 +36,7 @@
     - name: Copy box
       win_copy:
         src: "{{ item.value['src'] }}/{{ item.value['file'] }}"
-        dest: "{{ item.value['dest'] }}\\{{ item.value['file'] }}"
+        dest: "{{ item.value['dest'] }}\\{{ item.value['box_name'] }}.box"
         force: yes # the file will only be transferred if the content is different than destination.
       with_dict: "{{ boxes }}"
 
@@ -48,6 +48,11 @@
 
   when: boxes is defined
   tags: copy_boxes
+
+#- name: Adding boxes
+#  win_command: "vagrant box add {{ item.value.['dest'] }}\\{{ item.value.['box_name'] }}.box"
+#  with_dict: "{{ boxes }}"
+#  tags: add_boxes
 
 - name: Vagrant up boxes
   block:

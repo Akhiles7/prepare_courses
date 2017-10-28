@@ -23,7 +23,23 @@
 - name: Copy boxes
   block:
     - debug:
-        msg: Copy boxes
+        var: item.value['dest']
+        verbosity: 1
+      with_dict: "{{ boxes }}"
+
+    - name: Create or check destination
+      win_file: 
+        path: "{{ item.value['dest'] }}"
+        state: directory
+      with_dict: "{{ boxes }}"
+
+    - name: Check box existance and md5-summ
+      win_stat:
+        path: "{{ item.value['dest'] }}\\{{ item.value['file'] }}"
+        get_md5: true
+      with_dict: "{{ boxes }}"
+      register: box_exist 
+
   when: boxes is defined
   tags: copy_boxes
 

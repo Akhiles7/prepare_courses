@@ -33,12 +33,18 @@
         state: directory
       with_dict: "{{ boxes }}"
 
+    - name: Copy box
+      win_copy:
+        src: "{{ item.value['src'] }}/{{ item.value['file'] }}"
+        dest: "{{ item.value['dest'] }}\\{{ item.value['file'] }}"
+        force: yes # the file will only be transferred if the content is different than destination.
+      with_dict: "{{ boxes }}"
+
     - name: Check box existance and md5-summ
       win_stat:
         path: "{{ item.value['dest'] }}\\{{ item.value['file'] }}"
         get_md5: true
       with_dict: "{{ boxes }}"
-      register: box_exist 
 
   when: boxes is defined
   tags: copy_boxes

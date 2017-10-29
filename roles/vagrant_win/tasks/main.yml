@@ -26,33 +26,40 @@
         var: item.value['dest']
         verbosity: 1
       with_dict: "{{ boxes }}"
-
     - name: Create or check destination
       win_file: 
         path: "{{ item.value['dest'] }}"
         state: directory
       with_dict: "{{ boxes }}"
-
     - name: Copy box
       win_copy:
         src: "{{ item.value['src'] }}/{{ item.value['file'] }}"
         dest: "{{ item.value['dest'] }}\\{{ item.value['box_name'] }}.box"
-        force: yes # the file will only be transferred if the content is different than destination.
+        force: no
+#        force: yes # the file will only be transferred if the content is different than destination.
       with_dict: "{{ boxes }}"
-
     - name: Check box existance and md5-summ
       win_stat:
         path: "{{ item.value['dest'] }}\\{{ item.value['file'] }}"
         get_md5: true
       with_dict: "{{ boxes }}"
-
   when: boxes is defined
   tags: copy_boxes
 
-#- name: Adding boxes
-#  win_command: "vagrant box add {{ item.value.['dest'] }}\\{{ item.value.['box_name'] }}.box"
-#  with_dict: "{{ boxes }}"
-#  tags: add_boxes
+
+- name: Adding boxes
+  block:
+    - name: Exec vagrant box add
+      win_command: "vagrant box add {{ item.value['box_name'] }}  {{ item.value['dest'] }}\\{{ item.value['box_name'] }}.box"
+      with_dict: "{{ boxes }}"
+      register: boxadd_out
+      failed_when:
+        - not ("The box you\'re attempting to add already exists" in boxadd_out.stderr)
+        - not ("Successfully added box" in boxadd_out.stdout)
+    - debug:
+        var: boxadd_out
+        verbosity: 1 
+  tags: add_boxes
 
 - name: Vagrant up boxes
   block:

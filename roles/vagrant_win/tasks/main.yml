@@ -6,3 +6,4 @@
 - import_tasks: "./init.yml"
 - import_tasks: "./config.yml"
 - import_tasks: "./up.yml"
+- import_tasks: "./destroy.yml"

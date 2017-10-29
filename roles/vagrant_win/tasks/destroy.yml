@@ -1,0 +1,9 @@
+- name: Vagrant destroy boxes
+  block:
+    - name: Exec vagrant destroy 
+      win_command: "vagrant destroy -f"
+      args:
+        chdir: "{{ item.value['dest'] }}"
+      with_dict: "{{ boxes }}"
+  when: boxes is defined
+  tags: destroy 

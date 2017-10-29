@@ -1,0 +1,15 @@
+- name: Initialize boxes
+  block:
+    - name: Exec vagrant init
+      win_command: "vagrant init -f {{ item.value['box_name'] }}"
+      args:
+        chdir: "{{ item.value['dest'] }}"
+      with_dict: "{{ boxes }}"
+      register: boxinit_out
+      changed_when:
+        - ("has been placed in this directory" in boxinit_out.stdout)
+      failed_when:
+        - not ("already exists in this directory" in boxinit_out.stderr)
+        - not ("has been placed in this directory" in boxinit_out.stdout)
+  when: boxes is defined
+  tags: init_boxes

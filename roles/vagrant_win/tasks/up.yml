@@ -1,0 +1,11 @@
+- name: Vagrant up boxes
+  block:
+#    - name: Exec vagrant up
+#      win_command: "vagrant up"
+#      args:
+#        chdir: "{{ item.value['dest'] }}"
+#      with_dict: "{{ boxes }}"
+    - debug:
+        msg: up
+  when: boxes is defined
+  tags: up

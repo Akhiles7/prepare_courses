@@ -53,6 +53,8 @@
       win_command: "vagrant box add --checksum-type md5 --checksum {{ item.value['md5'] }} {{ item.value['box_name'] }}  {{ item.value['dest'] }}\\{{ item.value['box_name'] }}.box"
       with_dict: "{{ boxes }}"
       register: boxadd_out
+      changed_when:
+        - ("Successfully added box" in boxadd_out.stdout)
       failed_when:
         - not ("The box you\'re attempting to add already exists" in boxadd_out.stderr)
         - not ("Successfully added box" in boxadd_out.stdout)

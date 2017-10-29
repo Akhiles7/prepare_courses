@@ -39,3 +39,5 @@ ansible_winrm_transport = basic
 #ansible_winrm_cert_pem = /mnt/cert.pem
 #ansible_winrm_cert_key_pem = /mnt/cert.pem
 ansible_winrm_server_cert_validation = ignore
+#ansible_winrm_operation_timeout_sec = 300 # not working
+#ansible_winrm_read_timeout_sec = 360 # not working

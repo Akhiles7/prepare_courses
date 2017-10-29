@@ -47,7 +47,7 @@
   tags: copy_boxes
 
 
-- name: Adding boxes
+- name: Add boxes
   block:
     - name: Exec vagrant box add
       win_command: "vagrant box add {{ item.value['box_name'] }}  {{ item.value['dest'] }}\\{{ item.value['box_name'] }}.box"
@@ -58,11 +58,34 @@
         - not ("Successfully added box" in boxadd_out.stdout)
     - debug:
         var: boxadd_out
-        verbosity: 1 
+        verbosity: 1
+  when: boxes is defined 
   tags: add_boxes
+
+- name: Initialize boxes
+  block:
+    - name: Exec vagrant init
+      win_command: "vagrant init"
+      args:
+        chdir: "{{ item.value['dest'] }}"
+      with_dict: "{{ boxes }}"
+  when: boxes is defined
+  tags: init_boxes
+
+- name: Configure boxes
+  block:
+    - debug:
+        msg: config
+  when: boxes is defined
+  tags: config_boxes
 
 - name: Vagrant up boxes
   block:
+#    - name: Exec vagrant up
+#      win_command: "vagrant up"
+#      args:
+#        chdir: "{{ item.value['dest'] }}"
+#      with_dict: "{{ boxes }}"
     - debug:
         msg: up
   when: boxes is defined

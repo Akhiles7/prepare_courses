@@ -50,7 +50,7 @@
 - name: Add boxes
   block:
     - name: Exec vagrant box add
-      win_command: "vagrant box add {{ item.value['box_name'] }}  {{ item.value['dest'] }}\\{{ item.value['box_name'] }}.box"
+      win_command: "vagrant box add --checksum-type md5 --checksum {{ item.value['md5'] }} {{ item.value['box_name'] }}  {{ item.value['dest'] }}\\{{ item.value['box_name'] }}.box"
       with_dict: "{{ boxes }}"
       register: boxadd_out
       failed_when:
@@ -69,6 +69,12 @@
       args:
         chdir: "{{ item.value['dest'] }}"
       with_dict: "{{ boxes }}"
+      register: boxinit_out
+      changed_when:
+        - ("has been placed in this directory" in boxinit_out.stdout)
+      failed_when:
+        - not ("already exists in this directory" in boxinit_out.stderr)
+        - not ("has been placed in this directory" in boxinit_out.stdout)
   when: boxes is defined
   tags: init_boxes
 

@@ -1,0 +1,24 @@
+---
+# tasks file for putty_win/
+- name: Install putty
+  block:
+    - name: "Create folder for downloads: {{ downloads }}"
+      win_file:
+        path: "{{ downloads }}"
+        state: directory
+    - name: Download putty
+      win_get_url:
+        url: "{{ putty.distrib.url }}"
+        dest: "{{ downloads }}"
+        force: no
+      register: downlout 
+    - name: Install putty msi package 
+      win_package:
+      win_package:
+        path: "{{ downlout.dest }}"
+        product_id: "{{ putty.distrib.product_id }}"
+        arguments: "/quiet /norestart"
+        state: present
+  tags:
+    - install
+    - putty

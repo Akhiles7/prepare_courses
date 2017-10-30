@@ -5,5 +5,7 @@
       args:
         chdir: "{{ item.value['dest'] }}"
       with_dict: "{{ boxes }}"
-  when: boxes is defined
+  when:
+    - boxes is defined
+    - destroy
   tags: destroy 

@@ -43,7 +43,9 @@
       when: "{{ ansible_distribution | match(\"Windows 10\") }}"
     - name: Change standby timeout
       win_command: POWERCFG -change -standby-timeout-ac 1440 
+      tags: powercfg
 
   roles:
     - { role: virtualbox_win }
+    - { role: putty_win }
     - { role: vagrant_win }

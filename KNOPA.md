@@ -51,7 +51,7 @@ IP-адреса ВМ по умолчанию:
 
 **Ad-hoc больше нет.**  
 Если установка ПО и копирование образов не требуется, можно сразу запустить или удалить образы с помощью тэгов:  
-    ansible-playbook -i hosts [playbook_file.yml] --tags="init, up"  
+    ansible-playbook -i hosts [playbook_file.yml] --tags="init_boxes, config_boxes, up"  
     ansible-playbook -i hosts [playbook_file.yml] --tags="destroy" --extra-vars="destroy=true"  
 
 *destroy* еще нужно проверить. И вообще, из-за нехватки времени все поехало в ПРОМ недотестированным.  

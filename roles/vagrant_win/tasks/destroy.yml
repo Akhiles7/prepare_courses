@@ -1,12 +1,12 @@
 - name: Vagrant destroy boxes
   block:
     - name: Kill all VBoxHeadless processes
-      win_shell: "Get-Process VBoxHeadless | Stop-Process"
+      win_shell: Get-Process VBoxHeadless | Stop-Process -Confirm:$false
       register: kill_out
       failed_when:
         - not ("Cannot find a process with the name" in kill_out.stderr)
-
-    # Get-ChildItem -Path 'C:\Users\DevOps\VirtualBox VMs\' -Recurse -Filter 'master*' | Remove-Item -Force -Recurse
+        - not ("Не удалось найти процесс с именем" in kill_out.stderr)
+      ignore_errors: true
 
     - name: Clean user VirtualBox VMs
 #      win_shell: Get-ChildItem -Recurse -Filter "{{ item.value['box_name'] }}*" | Remove-Item -Force -Recurse -Confirm:$false

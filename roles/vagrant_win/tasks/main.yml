@@ -7,3 +7,4 @@
 - import_tasks: "./config.yml"
 - import_tasks: "./up.yml"
 - import_tasks: "./destroy.yml"
+- import_tasks: "./reboot.yml"

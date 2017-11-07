@@ -1,12 +1,23 @@
 - name: Vagrant destroy boxes
   block:
+#    - name: Get vagrant global status
+#      shell: vagrant global-status --prune
+#      register: vagr_glob_stat
+
     - name: Kill all VBoxHeadless processes
       win_shell: Get-Process VBoxHeadless | Stop-Process -Confirm:$false
       register: kill_out
       failed_when:
         - not ("Cannot find a process with the name" in kill_out.stderr)
         - not ("Не удалось найти процесс с именем" in kill_out.stderr)
+        - not ("NoProcessFoundForGivenName" in kill_out.stderr)
       ignore_errors: true
+
+    - name: Clean .vagrant in dest
+      win_shell: Get-ChildItem -Recurse | Remove-Item -Force -Exclude:'*.box' -Recurse -Confirm:$false
+      args:
+        chdir: "{{ item.value['dest'] }}"
+      with_dict: "{{ boxes }}"
 
     - name: Clean user VirtualBox VMs
 #      win_shell: Get-ChildItem -Recurse -Filter "{{ item.value['box_name'] }}*" | Remove-Item -Force -Recurse -Confirm:$false

@@ -1,4 +1,4 @@
 ---
 # defaults file for virtualbox_win/
 downloads: D:\Ansible
-course_path: D:\DevOps\gjs_course
+uninstall: false

@@ -1,0 +1,44 @@
+- name: Configure boxes
+  block:
+
+    - name: Check Vagrantfile
+      win_stat:
+        path: "{{ item.value['dest'] }}\\Vagrantfile"
+      with_dict: "{{ boxes }}"
+      register: vagrantfile_out
+#      failed_when:
+#        - not (vagrantfile_out.stat.exist)
+#        - vagrantfile_out.stat.isdir
+
+    - name: Set ip address
+      win_lineinfile:
+        path:  "{{ item.value['dest'] }}\\Vagrantfile"
+        regexp: 'config\.vm\.network \"private_network\"'
+        line: '  config.vm.network "private_network", ip: "{{ item.value["ip"] }}"'
+      with_dict: "{{ boxes }}"
+
+    - name: Set provider
+      win_lineinfile:
+        path:  "{{ item.value['dest'] }}\\Vagrantfile"
+        regexp: 'config.vm.provider'
+        line: '  config.vm.provider "virtualbox" do |vb|'
+      with_dict: "{{ boxes }}"
+
+    - name: Set memory
+      win_lineinfile:
+        path:  "{{ item.value['dest'] }}\\Vagrantfile"
+        regexp: 'vb\.memory'
+        line: '    vb.memory = "{{ item.value["mem"] }}"'
+      with_dict: "{{ boxes }}"
+
+    - name: End provider
+      win_lineinfile:
+        path:  "{{ item.value['dest'] }}\\Vagrantfile"
+        regexp: '# end'
+        line: '  end'
+        insert_after: "vb.memory"
+#        insert_before: "^end$"
+      with_dict: "{{ boxes }}"
+
+  when: boxes is defined
+  tags: config_boxes

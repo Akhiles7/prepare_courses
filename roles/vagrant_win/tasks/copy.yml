@@ -1,0 +1,32 @@
+- name: Copy boxes
+  block:
+    - debug:
+        var: item.value['dest']
+        verbosity: 1
+      with_dict: "{{ boxes }}"
+    - name: Create or check destination
+      win_file:
+        path: "{{ item.value['dest'] }}"
+        state: directory
+      with_dict: "{{ boxes }}"
+    - name: Copy box
+      win_copy:
+        src: "{{ item.value['src'] }}/{{ item.value['file'] }}"
+        dest: "{{ item.value['dest'] }}\\{{ item.value['box_name'] }}.box"
+        force: no
+#        force: yes # the file will only be transferred if the content is different than destination.
+      with_dict: "{{ boxes }}"
+    - name: Check box existance and md5-summ
+      win_stat:
+        path: "{{ item.value['dest'] }}\\{{ item.value['file'] }}"
+        get_checksumm: yes
+        checksumm_algorithm: md5
+      with_dict: "{{ boxes }}"
+      register: checkbox_out
+      failed_when:
+        - not ( "{{ item.value['md5'] }}" == checkbox_out.stat.md5 )
+    - debug:
+        var: checkbox_out
+        verbosity: 1
+  when: boxes is defined
+  tags: copy_boxes

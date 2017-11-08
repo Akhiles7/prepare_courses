@@ -1,5 +1,15 @@
 ---
 # tasks file for virtualbox_win/
+
+- name: Uninstall virtualbox
+  block:
+    - name: Uninstall virtualbox
+      win_package:
+        product_id: "{{ virtualbox.distrib.product_id }}"
+        state: absent 
+  tags: uninstall
+  when: uninstall
+
 - name: Install virtualbox
   block:
     - name: "Create folder for downloads: {{ downloads }}"
@@ -19,3 +29,5 @@
         arguments: "--silent"
         state: present
   tags: install
+
+

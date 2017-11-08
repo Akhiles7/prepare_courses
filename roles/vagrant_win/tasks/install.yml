@@ -29,4 +29,4 @@
         product_id: "{{ vagrant.distrib.product_id }}"
         arguments: "/quiet /norestart"
         state: present
- tags: install
+  tags: install

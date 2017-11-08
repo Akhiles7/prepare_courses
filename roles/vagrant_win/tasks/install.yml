@@ -1,3 +1,16 @@
+- name: Uninstall vagrant
+  block:
+    - name: Uninstall old vagrant
+      win_package:
+        product_id: "{{ vagrant_old.distrib.product_id }}"
+        state: absent
+    - name: Uninstall current vagrant
+      win_package:
+        product_id: "{{ vagrant.distrib.product_id }}"
+        state: absent 
+  tags: uninstall
+  when: uninstall
+
 - name: Install vagrant
   block:
     - name: "Create folder for downloads: {{ downloads }}"
@@ -16,4 +29,4 @@
         product_id: "{{ vagrant.distrib.product_id }}"
         arguments: "/quiet /norestart"
         state: present
-  tags: install
+ tags: install

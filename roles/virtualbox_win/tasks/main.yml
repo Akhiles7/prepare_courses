@@ -3,7 +3,11 @@
 
 - name: Uninstall virtualbox
   block:
-    - name: Uninstall virtualbox
+    - name: Uninstall old virtualbox
+      win_package:
+        product_id: "{{ virtualbox_old.distrib.product_id }}"
+        state: absent
+    - name: Uninstall current virtualbox
       win_package:
         product_id: "{{ virtualbox.distrib.product_id }}"
         state: absent 

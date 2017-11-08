@@ -8,4 +8,4 @@ vagrant_old:
 vagrant:
   distrib:
     url: "https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.msi"
-    product_id: ''
+    product_id: '{0E54232A-0277-4C40-BA3D-B9AAB045CC0B}'

@@ -42,3 +42,16 @@
 
   when: boxes is defined
   tags: config_boxes
+
+- name: Place Vagrantfile template
+  block:
+    - name: Try to place Vagrantfile
+      template:
+        src: "{{ item.value['box_name'] }}/Vagrantfile"
+        dest: "{{ item.value['dest'] }}\\Vagrantfile"
+      with_dict: "{{ boxes }}"
+      no_errors: true
+  when: boxes is defined
+  tags:
+    - config_boxes
+    - template

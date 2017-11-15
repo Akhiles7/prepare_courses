@@ -19,11 +19,21 @@
         chdir: "{{ item.value['dest'] }}"
       with_dict: "{{ boxes }}"
 
-    - name: Clean user VirtualBox VMs
+    - debug:
+        msg: "Dest: {{ item.value['dest'] }}"
+      with_dict: "{{ boxes }}"
+
+    - name: Clean course user VirtualBox VMs
 #      win_shell: Get-ChildItem -Recurse -Filter "{{ item.value['box_name'] }}*" | Remove-Item -Force -Recurse -Confirm:$false
       win_shell: Get-ChildItem -Recurse | Remove-Item -Force -Recurse -Confirm:$false
       args:
         chdir: C:\Users\DevOps\VirtualBox VMs\
+      with_dict: "{{ boxes }}"
+
+    - name: Clean user user VirtualBox VMs
+      win_shell: Get-ChildItem -Recurse | Remove-Item -Force -Recurse -Confirm:$false
+      args:
+        chdir: C:\Users\user\VirtualBox VMs\
       with_dict: "{{ boxes }}"
 
   when:

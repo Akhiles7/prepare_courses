@@ -50,7 +50,7 @@
         src: "{{ item.value['box_name'] }}/Vagrantfile"
         dest: "{{ item.value['dest'] }}\\Vagrantfile"
       with_dict: "{{ boxes }}"
-      no_errors: true
+      ignore_errors: true
   when: boxes is defined
   tags:
     - config_boxes

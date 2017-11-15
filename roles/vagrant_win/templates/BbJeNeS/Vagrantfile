@@ -1,0 +1,19 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+ 
+Vagrant.configure(2) do |config|
+  config.vm.box = "{{ item.value['box_name'] }}"
+  config.vm.guest = :windows
+  config.vm.communicator = "winrm"
+  config.vm.boot_timeout = 600
+  config.vm.graceful_halt_timeout = 600
+  config.vm.network "private_network", ip: "{{ item.value["ip"] }}"
+  config.vm.network :forwarded_port, guest: 3389, host: 3389
+  config.vm.network :forwarded_port, guest: 5985, host: 5985, id: "winrm", auto_correct: true
+ 
+  config.vm.provider "virtualbox" do |vb|
+     vb.name = "BbJeNeS"
+     vb.memory = {{ item.value["mem"] }}
+  end
+end
+

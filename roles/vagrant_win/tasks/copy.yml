@@ -13,8 +13,7 @@
       win_copy:
         src: "{{ item.value['src'] }}/{{ item.value['file'] }}"
         dest: "{{ item.value['dest'] }}\\{{ item.value['box_name'] }}.box"
-        force: no
-#        force: yes # the file will only be transferred if the content is different than destination.
+        force: yes # the file will only be transferred if the content is different than destination.
       with_dict: "{{ boxes }}"
     - name: Check box existance and md5-summ
       win_stat:

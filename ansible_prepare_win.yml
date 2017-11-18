@@ -27,8 +27,7 @@
       slave_win:
         box_name: ansible_win_slave
         file: ansible_win_slave.box
-#        md5: 2ee65e11023725e6ad48e239b35b2141
-        md5: a1c2a44eb551f904e7be3848175cb87b 
+        md5: 9618a42a4534f7365fd6ea071526595e
         url:
         src: "/mnt" # directory
         dest: "{{ course_path }}\\boxes\\win_slave"

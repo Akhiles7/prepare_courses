@@ -2,3 +2,6 @@
 # defaults file for vagrant_win/
 downloads: D:\Ansible
 destroy: false
+uninstall: false
+reboot: false
+up: false

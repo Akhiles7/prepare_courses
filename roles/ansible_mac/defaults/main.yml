@@ -3,10 +3,11 @@
 # local - boxes should be uploaded in local folder /opt/prepare/boxes BEFORE running playbook
 # remote - boxes will be uploaded from Internet (Google Drive or Hashicorp repos)
 box_src: local 
+prep_box_path: "/Users/devops/prepare/boxes"
 # Variable 'box_add' required for two different variants of adding boxes:
 # asis - do not replace boxes if they already added in system, in case they are not - they will be added.
 # update - replace boxes even of they already added in system (in case if update required)
-box_add: asis
+box_add: update
 # Variable 'box_init' required for:
 # initialize - defult value, this is required when course machines are empty, or cleaned up manually
 # cleanup - will remove and reinitialize boxes

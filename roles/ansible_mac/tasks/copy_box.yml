@@ -1,0 +1,28 @@
+- block:
+    - name: Echo item
+      debug:
+        var: item
+        verbosity: 1
+    - name: Fix {{ item.box }} permissions
+      file:
+        path: "{{ prep_box_path }}/{{ item.box }}"
+        mode: 0644
+    - name: Check {{ item.box }}
+      stat:
+        path: "{{ prep_box_path }}/{{ item.box }}"
+        get_md5: yes
+      register: box
+      failed_when: ( box.stat.md5 is undefined ) or ( box.stat.exists == false ) or ( item.box_md5 != box.stat.md5 )
+  rescue:
+    - name: Copy {{ item.box }}
+      copy:
+        src: "{{ prep_box_path }}/{{ item.box }}"
+        dest: "{{ prep_box_path }}/{{ item.box }}"
+        mode: 0644
+  always:
+    - name: Check {{ item.box }}
+      stat:
+        path: "{{ prep_box_path }}/{{ item.box }}"
+        get_md5: yes
+      register: box
+      failed_when: ( box.stat.md5 is undefined ) or ( box.stat.exists == false ) or ( item.box_md5 != box.stat.md5 )

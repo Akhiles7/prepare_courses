@@ -32,34 +32,11 @@
   when: "'remote' in box_src"
   tags: prep_boxes
   
-- block:
-    - name: Fix win_slave permissions
-      file:
-        path: "{{ prep_box_path }}/{{ vbox.slave_win.name }}"
-        mode: 0644
-    - name: Check win_slave
-      stat:
-        path: "{{ prep_box_path }}/{{ vbox.slave_win.name }}"
-        get_md5: yes
-      register: box
-      failed_when: ( box.stat.md5 is undefined ) or ( box.stat.exists == false ) or ( vbox.slave_win.md5 != box.stat.md5 )
-  rescue:
-    - name: Copy boxes
-      copy:
-        src: "{{ prep_box_path }}/{{ vbox.slave_win.name }}"
-        dest: "{{ prep_box_path }}/{{ vbox.slave_win.name }}"
-        mode: 0644
-  always:
-    - name: Check win_slave 
-      stat:
-        path: "{{ prep_box_path }}/{{ item.box }}"
-        get_md5: yes
-      register: box
-      failed_when: ( box.stat.exists == false ) or ( item.box_md5 != box.stat.md5 )
-      with_items:
-        - { box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
-        - { box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
-        - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
+- include_tasks: "./copy_box.yml"
+  with_items:
+    - { box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
+    - { box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
+    - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
   when: "'local' in box_src"
   tags: prep_boxes
 

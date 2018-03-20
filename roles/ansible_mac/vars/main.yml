@@ -18,7 +18,7 @@ vbox:
     mem: 1024
   slave_win:
     name: ansible_win_slave.box
-    md5: 2ee65e11023725e6ad48e239b35b2141
+    md5: 8a4058c7b52b5a66b7fb007a9ede34fd
     url: https://drive.google.com/uc?authuser=0&id=0BzRbJp3tSIO1ZnlNU2JILWZmYlE&export=download
     folder: "{{ course_path }}/boxes/win_slave"
     ip: 192.168.33.103

@@ -1,6 +1,14 @@
 ---
+- name: Check the folder exist
+  stat:
+    path: "{{ prep_box_path }}"
+  register: p
+  failed_when: 
+    - p.stat.isdir is not defined
+    - p.stat.isdir == False
+
 - block:
-    - name: Clean up folder defore
+    - name: Clean up folder before
       file:
         state: "{{ item }}"
         path: "{{ prep_box_path }}"
@@ -24,25 +32,11 @@
   when: "'remote' in box_src"
   tags: prep_boxes
   
-- block:
-    - name: Check the folder exist
-      stat:
-        path: "{{ prep_box_path }}"
-      register: p
-      failed_when: 
-        - p.stat.isdir is not defined
-        - p.stat.isdir == False
-    - name: Check if boxes in place
-      stat:
-        path: "{{ prep_box_path }}/{{ item.box }}"
-        get_md5: yes
-      register: box
-      failed_when: ( box.stat.exists == false) or ( not item.box_md5 in box.stat.md5 )
-      with_items:
-        - { box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
-        - { box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
-#        - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
-    - debug: "msg='All ok!'"
+- include_tasks: "./copy_box.yml"
+  with_items:
+    - { box: "{{ vbox.master.name }}", box_md5: "{{ vbox.master.md5 }}" }
+    - { box: "{{ vbox.slave_nix.name }}", box_md5: "{{ vbox.slave_nix.md5 }}" }
+    - { box: "{{ vbox.slave_win.name }}", box_md5: "{{ vbox.slave_win.md5 }}" }
   when: "'local' in box_src"
   tags: prep_boxes
 
@@ -110,8 +104,8 @@
       with_nested:
         - [ 'halt', 'destroy' ]
         - "{{ vids.stdout_lines }}"
-    - name: Force remove all vms
-      shell: "for f in `vboxmanage list vms | awk '{print $2}'`;do vboxmanage unregistervm --delete $f ;done"
+    #- name: Force remove all vms
+    #  shell: "for f in `vboxmanage list vms | awk '{print $2}'`;do vboxmanage unregistervm --delete $f ;done"
     - name: Prune Vagrant global status
       shell: "/usr/local/bin/vagrant global-status --prune"
       args:
